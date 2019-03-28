@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>我的发单</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/style.css">
+		<style type="text/css">
+			.mui-pull-top-tips {
+				position: absolute;
+				top: -20px;
+				left: 50%;
+				margin-left: -25px;
+				width: 40px;
+				height: 40px;
+				border-radius: 100%;
+				z-index: 1;
+			}
+			
+			.mui-bar~.mui-pull-top-tips {
+				top: 24px;
+			}
+			
+			.mui-pull-top-wrapper {
+				width: 42px;
+				height: 42px;
+				display: block;
+				text-align: center;
+				background-color: #efeff4;
+				border: 1px solid #ddd;
+				border-radius: 25px;
+				background-clip: padding-box;
+				box-shadow: 0 4px 10px #bbb;
+				overflow: hidden;
+			}
+			
+			.mui-pull-top-tips.mui-transitioning {
+				-webkit-transition-duration: 200ms;
+				transition-duration: 200ms;
+			}
+			
+			.mui-pull-top-tips .mui-pull-loading {
+				/*-webkit-backface-visibility: hidden;
+				-webkit-transition-duration: 400ms;
+				transition-duration: 400ms;*/
+				margin: 0;
+			}
+			
+			.mui-pull-top-wrapper .mui-icon,
+			.mui-pull-top-wrapper .mui-spinner {
+				margin-top: 7px;
+			}
+			
+			.mui-pull-top-wrapper .mui-icon.mui-reverse {
+				/*-webkit-transform: rotate(180deg) translateZ(0);*/
+			}
+			
+			.mui-pull-bottom-tips {
+				text-align: center;
+				background-color: #efeff4;
+				font-size: 15px;
+				line-height: 40px;
+				color: #777;
+			}
+			
+			.mui-pull-top-canvas {
+				overflow: hidden;
+				background-color: #fafafa;
+				border-radius: 40px;
+				box-shadow: 0 4px 10px #bbb;
+				width: 40px;
+				height: 40px;
+				margin: 0 auto;
+			}
+			
+			.mui-pull-top-canvas canvas {
+				width: 40px;
+			}
+			
+			.clip {
+				height: 200px;
+				overflow: hidden;
+				background: no-repeat center;
+				background-size: 100% auto;
+			}
+			
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				50% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			.mui-card {
+				-webkit-animation-name: fadeIn;
+				/*动画名称*/
+				-webkit-animation-duration: .5s;
+				/*动画持续时间*/
+				-webkit-animation-iteration-count: 1;
+				/*动画次数*/
+				-webkit-animation-delay: 0s;
+				/*延迟时间*/
+			}
+			
+			.mui-card-header.mui-card-media {
+				width: 100%;
+				height: 200px;
+				padding: 0;
+				overflow: hidden;
+			}
+			
+			.mui-card-header.mui-card-media img {
+				width: 100%;
+				height: auto;
+				margin: 0 auto;
+			}
+			
+			.mui-card .state {
+				position: absolute;
+				right: 10px;
+				bottom: 40px;
+				font-weight: bold;
+				font-size: 2em;
+				/* Rotate div */
+				transform: rotate(-35deg);
+			}
+			.green{
+				color:#2AC845;
+			}
+			.orange{
+				color:#f90;
+			}
+			.red{
+				color: #DD524D;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我的发单</h1>
+		</header>
+		<!--下拉刷新容器-->
+		<div class="mui-content" id="pullrefresh">
+			<div id="cards">
+				<div class="mui-card" v-for="(item,index) in items">
+					<div class="mui-card-header mui-card-media">
+						<img v-bind:src="item.thumbnail" alt="" onerror="this.src='../images/no-img.png'" />
+					</div>
+					<div class="mui-card-content">
+						<div class="mui-card-content-inner">
+							<p>Posted on {{item.create_time}}</p>
+							<p style="color: #333;">{{item.content}}</p>
+						</div>
+						<span v-bind:class="item.styleClass">{{item.state}}</span>
+					</div>
+					<div class="mui-card-footer">
+						<a class="show mui-card-link" v-on:click="showQues(item.id)">查看详情</a>
+						<a class="del mui-card-link" v-on:click="delQues(index,item.id)">删除</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/mui.pullToRefresh.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/mui.pullToRefresh.material.js" type="text/javascript" charset="utf-8"></script>
+		<script>
+			(function($) {
+				$.init();
+				var MIN_ID = 0;
+				var vue = new Vue({
+					el: "#cards",
+					data: {
+						items: []
+					},
+					methods: {
+						delQues: function(index, del_id) {
+
+							mui.confirm("确认删除这一需求单吗？<br><font color='red'>（注：已经被接单的则无法删除）</font>", "", ["取消", "是，删除"], function(e) {
+								if(e.index == 1) {
+									app.request("Ques", "deleteQues", {
+										'id': del_id
+									}, function(res) {
+										if(res.login == 0) {
+											mui.toast(res.info);
+											return app.toLogin(res.info);
+										}
+
+										if(res.status == 0)
+											mui.toast(res.info);
+										else {
+											vue.items.splice(index, 1);
+										}
+									});
+								} else {
+									return;
+								}
+							}, "div");
+						},
+						showQues: function(show_id) {
+							mui.openWindow({
+								id: "user/showQues",
+								url: "showQues.html",
+								show: {
+									aniShow: "slide-in-top",
+									duration: 200,
+								},
+								extras: {
+									show_id: show_id, //传入需要打开的疑问id
+								},
+								waiting: {
+									autoShow: false,
+								}
+							});
+						}
+					}
+				});
+
+				$.plusReady(function() {
+					app.log();
+					plus.webview.currentWebview().setStyle({
+						scrollIndicator: 'none'
+					});
+					//延迟网络加载
+					setTimeout(init_pull_refresh, 300);
+				});
+
+				//初始化下拉刷新
+				function init_pull_refresh() {
+					pull_down();
+					//循环初始化所有下拉刷新，上拉加载。
+					mui("#pullrefresh").pullToRefresh({
+						down: {
+							callback: function() {
+								pull_down(this);
+							}
+						},
+						up: {
+							callback: function() {
+								pull_up(this);
+							}
+						}
+					});
+				}
+
+				//下拉刷新
+				function pull_down(self) {
+					app.request("User", "getUserQues", {
+							'min_id': 0 //下拉刷新取0
+						},
+						function(res) {
+							if(self) {
+								self.endPullDownToRefresh();
+								playRefresh();
+							}
+							if(res.login == 0) {
+								mui.toast(res.info);
+								return app.toLogin();
+							}
+							if(res.status == 1) {
+								items = convert(res.data);
+								vue.items = items;
+							}
+						},
+						function(xhr) {
+							if(self)
+								self.endPullDownToRefresh();
+						}, "none");
+				}
+
+				function pull_up(self) {
+					app.request("User", "getUserQues", {
+							'min_id': MIN_ID //下拉刷新取0
+						},
+						function(res) {
+							if(self)
+								self.endPullUpToRefresh()
+							if(res.login == 0) {
+								mui.toast(res.info);
+								return app.toLogin();
+							}
+							if(res.status == 1) {
+								items = convert(res.data);
+								vue.items = vue.items.concat(items);
+							}
+						},
+						function(xhr) {
+							if(self)
+								self.endPullUpToRefresh()
+						}, "none");
+				}
+
+				//格式化服务器的数据j
+				function convert(items) {
+					if(items.length == 0) {
+						//mui.toast("已经全都加载完了");
+						return items;
+					}
+					items.forEach(function(item) {
+						item.thumbnail = UPLOAD_URL + item.thumbnail;
+						item.create_time = app.getLocalTime(item.create_time);
+						if(item.state == 0) {
+							item.state = "等待接单";
+							item.styleClass="state red";
+						} else if(item.state == 1) {
+							item.state = "进行中";
+							item.styleClass="state orange";
+						} else if(item.state == 2){
+							item.state = "已完成";
+							item.styleClass="state green";
+						}
+
+					});
+					MIN_ID = items[items.length - 1].id;
+					return items;
+				}
+			})(mui);
+		</script>
+	</body>
+
+</html>

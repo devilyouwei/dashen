@@ -1,0 +1,332 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>我的资料</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			.head {
+				height: 40px;
+			}
+			
+			#head {
+				line-height: 40px;
+			}
+			
+			.head-img {
+				width: 40px;
+				height: 40px;
+			}
+			
+			#head-img1 {
+				position: absolute;
+				bottom: 10px;
+				right: 40px;
+				width: 40px;
+				height: 40px;
+			}
+			
+			.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			
+			.mui-content {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<button type="button" id="finish" class="mui-left mui-btn mui-btn-link mui-btn-nav mui-pull-left">
+					<span class="mui-icon mui-icon-left-nav"></span>完成
+			</button>
+			<h1 class="mui-title">头信息</h1>
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a id="head" class="mui-navigate-right">个人头像
+						<span class="mui-pull-right head">
+							<img class="head-img mui-action-preview" id="head-img1" src=""/>
+						</span>
+					</a>
+				</li>
+			</ul>
+
+			<div class="mui-input-row mui-margin-vertical">
+				<h5 class="mui-margin-horizontal-xs">个人签名：</h5>
+				<input class="mui-padding-lg" id="signature" type="text" placeholder="个人签名" />
+			</div>
+
+			<p class="mui-content-padded">点击：分享邀请码</p>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate-right" id="ph_share">
+					</a>
+				</li>
+			</ul>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script type="text/javascript">
+			(function($) {
+				mui.init({
+					swipeBack: true
+				});
+
+				$.plusReady(function() {
+					app.log();
+					//初始化头像，和预览图
+					setTimeout(function() {
+						defaultInfo();
+						setTimeout(function() {
+							initImgPreview();
+						}, 200);
+					}, 0);
+
+				});
+
+				//弹出菜单
+				mui(".mui-table-view-cell").on("tap", "#head", function(e) {
+					if(mui.os.plus) {
+						var a = [{
+							title: "拍照"
+						}, {
+							title: "从手机相册选择"
+						}];
+						plus.nativeUI.actionSheet({
+							title: "修改头像",
+							cancel: "取消",
+							buttons: a
+						}, function(b) {
+							switch(b.index) {
+								case 0:
+									break;
+								case 1:
+									getImage();
+									break;
+								case 2:
+									galleryImg();
+									break;
+								default:
+									break;
+							}
+						})
+					}
+
+				});
+
+				//完成并返回
+				document.getElementById("finish").addEventListener("tap", function() {
+					var newSign = document.getElementById("signature").value;
+					var oldSign = app.getUserInfo().signature;
+					if(oldSign === newSign)
+						$.back();
+					else {
+						app.request("User", "updateSignature", {
+							'signature': newSign
+						}, function(res) {
+							if(res.login == 0) {
+								mui.toast(res.info);
+								app.clearToken();
+								app.toLogin();
+								return false;
+							}
+							if(res.status == 1) {
+								app.setSignature(newSign);
+								mui.toast(res.info);
+								var view = plus.webview.getWebviewById("offcanvas");
+								$.fire(view, "updateHeadInfo");
+								$.back();
+							} else {
+								mui.toast(res.info);
+							}
+						});
+					}
+
+				});
+
+				//拍照
+				function getImage() {
+					var c = plus.camera.getCamera();
+					c.captureImage(function(e) {
+						plus.io.resolveLocalFileSystemURL(e, function(entry) {
+							cutImage(entry.toLocalURL());
+						}, function(e) {
+							console.log("读取拍照文件错误：" + e.message);
+						});
+					}, function(s) {
+						console.log("error" + s);
+					}, {
+						filename: "_doc/head.jpg"
+					})
+				}
+
+				//相册
+				function galleryImg() {
+					plus.gallery.pick(function(a) {
+						plus.io.resolveLocalFileSystemURL(a, function(entry) { //entry为图片原目录（相册）的句柄
+							cutImage(entry.toLocalURL());
+						}, function(e) {
+							console.log("读取图片错误：" + e.message);
+						});
+					}, function(a) {}, {
+						filter: "image"
+					})
+				};
+
+				//设置默认头像
+				function defaultInfo() {
+					var my_icon = app.getUserInfo().my_icon; //头像
+					var signature = app.getUserInfo().signature; //签名
+					document.getElementById("head-img1").src = my_icon || '../images/my_icon.jpg';
+					document.getElementById("signature").value = signature || "";
+					document.getElementById("ph_share").innerText = "我的邀请码：" + app.getUserInfo()['phone'];
+				}
+
+				document.getElementById("ph_share").addEventListener("tap", share);
+				//分享邀请码
+				function share() {
+					var msg = {
+						content: "请输入我的邀请码注册："+app.getUserInfo()['phone']+"（此分享来自呀哦服务）",
+						pictures: "/images/icon.png"
+					};
+					plus.share.sendWithSystem ? plus.share.sendWithSystem(msg, function() {
+						console.log('Success');
+					}, function(e) {
+						console.log('Failed: ' + JSON.stringify(e));
+					}) : shareSystemNativeJS();
+				}
+
+				//预览图像
+				document.getElementById("head-img1").addEventListener('tap', function(e) {
+					e.stopPropagation(); //阻止冒泡
+				});
+
+				function initImgPreview() {
+					var imgs = document.querySelectorAll("img.mui-action-preview");
+					imgs = mui.slice.call(imgs);
+					if(imgs && imgs.length > 0) {
+						var slider = document.createElement("div");
+						slider.setAttribute("id", "__mui-imageview__");
+						slider.classList.add("mui-slider");
+						slider.classList.add("mui-fullscreen");
+						slider.style.display = "none";
+						slider.addEventListener("tap", function() {
+							slider.style.display = "none";
+						});
+						slider.addEventListener("touchmove", function(event) {
+							event.preventDefault();
+						})
+						var slider_group = document.createElement("div");
+						slider_group.setAttribute("id", "__mui-imageview__group");
+						slider_group.classList.add("mui-slider-group");
+						imgs.forEach(function(value, index, array) {
+							//给图片添加点击事件，触发预览显示；
+							value.addEventListener('tap', function() {
+								slider.style.display = "block";
+								_slider.refresh();
+								_slider.gotoItem(index, 0);
+							})
+							var item = document.createElement("div");
+							item.classList.add("mui-slider-item");
+							var a = document.createElement("a");
+							var img = document.createElement("img");
+							img.setAttribute("src", value.src);
+							a.appendChild(img)
+							item.appendChild(a);
+							slider_group.appendChild(item);
+						});
+						slider.appendChild(slider_group);
+						document.body.appendChild(slider);
+						var _slider = mui(slider).slider();
+					}
+				}
+
+				//裁剪图片
+				function cutImage(path) {
+					plus.nativeUI.showWaiting("正在处理中...", {
+						back: "none",
+					});
+					//裁剪之前压缩一下效率更高
+					plus.zip.compressImage({
+						src: path,
+						dst: '_doc/zip_' + path.substr(path.lastIndexOf('/') + 1),
+						overwrite: true,
+						quality: 50,
+						height: "50%",
+					}, function(zip) {
+						plus.nativeUI.closeWaiting();
+						$.openWindow({
+							url: 'cropper.html',
+							id: 'cropper',
+							extras: {
+								path: zip.target,
+							},
+							show: {
+								aniShow: 'zoom-fade-in',
+								duration: 800
+							},
+							waiting: {
+								autoShow: false
+							}
+						});
+					}, function() {
+						plus.nativeUI.closeWaiting();
+						mui.toast('压缩失败！');
+					})
+				}
+
+				//更新用户头像
+				function update_head_img(e) {
+					var my_icon = e.detail.img; //大图base64
+					app.zipBaseImg(my_icon, 70, 70, function(sm_icon) {
+						var my_icon_sm = sm_icon
+						//先上传
+						app.request("User", "saveHeadImg", {
+							'my_icon': my_icon,
+							'my_icon_sm': my_icon_sm
+						}, function(res) {
+							if(res.login == 0)
+								return app.toLogin(res.info);
+
+							if(res.status == 1) {
+								app.setHeadImg(my_icon, my_icon_sm); //确认上传成功后存储到本地
+								if(my_icon == "")
+									my_icon = "../images/my_icon.jpg";
+								document.getElementById("head-img1").src = my_icon; //刷新小图
+								document.querySelector("#__mui-imageview__group .mui-slider-item img").src = my_icon; //刷新预览图
+								updateOffcanvas();
+								mui.toast(res.info);
+							} else {
+								mui.toast(res.info);
+							}
+
+						});
+					}); //压缩，获得小图base64
+
+				}
+
+				//修改offcanvas信息
+				function updateOffcanvas() {
+					var view = plus.webview.getWebviewById("offcanvas");
+					$.fire(view, "updateHeadInfo");
+				}
+
+				window.addEventListener("updateHeadImg", update_head_img); //添加自定义事件，其他页面调用
+			})(mui);
+		</script>
+	</body>
+
+</html>

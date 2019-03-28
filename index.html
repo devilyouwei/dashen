@@ -1,0 +1,556 @@
+<!doctype html>
+<html id="error">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>众帮</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/font-awesome.css" rel="stylesheet" />
+		<link href="css/style.css" rel="stylesheet" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/vConsole/3.2.0/vconsole.min.js"></script>
+		<script>
+			var vConsole = new VConsole()
+		</script>
+		<style>
+			.check {
+				background: #fff;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				text-align: center;
+				display: none;
+				z-index: 99;
+			}
+			
+			.check img {
+				margin-top: 25%;
+				width: 5em;
+			}
+			
+			.check p {
+				margin-top: 10px;
+			}
+			
+			.mui-icon-refreshempty {
+				padding: 10px;
+				color: gray;
+				font-size: 3em;
+			}
+			
+			.btn-float {
+				position: fixed;
+				bottom: 6%;
+				right: 4%;
+				height: 2.2em;
+				width: 2.2em;
+				font-size: 1.5em;
+				text-align: center;
+				border-radius: 100em;
+				z-index: 10;
+				box-shadow: 0px 0px 3px 2px #CCCCCC;
+			}
+			
+			#list {
+				display: none;
+			}
+			
+			.price {
+				color: #FF0000;
+				font-weight: 600;
+				font-size: 1.2em;
+			}
+			
+			#tab {
+				display: none;
+				white-space: nowrap;
+			}
+			
+			#search-box {
+				display: none;
+			}
+			
+			#tab a {
+				color: #000000;
+			}
+			
+			#tab a.active {
+				color: #007aff;
+				border-bottom: solid 2px #007aff;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--
+        	作者：devilyouwei@gmail.com
+        	时间：2017-08-13
+        	描述：主页，列出需求单，预加载地图页
+        -->
+		<div class="mui-content" id="content">
+			<!-- 错误页面 -->
+			<div class="check" id="check">
+				<img src="images/cloud-error.png" />
+				<p>连接服务器失败，请重试</p>
+				<div class="mui-row">
+					<i id="refresh" class="mui-icon mui-icon-refreshempty"></i>
+				</div>
+			</div>
+
+			<!--顶部分类选项卡-->
+			<div id="tab" class="mui-scroll-wrapper mui-padding-vertical-xs">
+				<div class="mui-scroll">
+					<a class="mui-padding-horizontal-xs" v-for="item in tabs" v-bind:data-tab-id="item.id">{{item.title}}</a>
+				</div>
+			</div>
+
+			<div id="search-box" class="mui-padding-horizontal-sm mui-row">
+				<div class="mui-input-row mui-search mui-plus-visible mui-col-xs-8">
+					<input id="search" type="search" class="mui-input-speech mui-input-clear" placeholder="搜索内容" />
+				</div>
+				<div id="mui-col-xs-4">
+					<button class="mui-btn mui-btn-primary mui-pull-right" id="showMap"><i class="icon-location-arrow">&nbsp;</i>附近需求</button>
+				</div>
+			</div>
+			<!--
+			<p class="mui-content-padded">最新未被接单</p>
+			-->
+			<div id="list">
+				<div class="cards">
+					<div class="mui-card" v-for="item in items">
+						<div class="mui-card-header mui-card-media">
+							<img v-bind:src="item.my_icon_sm" onerror="this.src='images/my_icon.jpg'" />
+							<div class="mui-media-body">
+								发单方：{{item.user_name}}
+								<p>{{item.create_time}}</p>
+							</div>
+						</div>
+						<div class="mui-card-content">
+							<div class="mui-card-content-inner">
+								<p>需求：{{item.title}}</p>
+								<p style="color: #333;">概述：{{item.content}}</p>
+								<p v-show="!item.loc==''"><i class="mui-icon mui-icon-location-filled">&nbsp;</i>{{item.loc}}</p>
+							</div>
+						</div>
+						<div class="mui-card-footer">
+							<span class="price" href="#">{{item.reward}}<span v-show="item.price">：￥{{item.price}}</span></span>
+							<a href="#" class="mui-card-link" v-bind:data-id="item.id" v-bind:data-title="item.title">查看详情</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/app.js"></script>
+		<script src="js/vue.min.js"></script>
+		<script type="text/javascript">
+			(function($, doc) {
+				$.init({
+					pullRefresh: {
+						container: '#list',
+						down: {
+							style: 'circle',
+							callback: init_index_ques
+						},
+						up: {
+							contentrefresh: '加载中...',
+							callback: more_index_ques
+						}
+					}
+				});
+				var TAB_ID = 0; //当前分类ID
+				var _self = null; //当前主窗口
+				var _map = null;
+				var _offcanvas = null; //offcanvas子窗口
+				var MIN_ID = 0;
+
+				var state = app.getState();
+				var check = doc.getElementById("check");
+				var refresh = doc.getElementById("refresh");
+				var vue = new Vue({
+					el: '.mui-content',
+					data: {
+						items: [],
+						tabs: []
+					}
+				});
+
+				$.plusReady(function() {
+					app.log();
+
+					//本地检测
+					if(!state.token) {
+						mui.toast("登陆状态失效");
+						return app.toLogin();
+					}
+
+					init_title(); //初始化头部
+
+					//初始化两大子页面
+					setTimeout(init_offcanvs, 300)
+					setTimeout(check_login, 400)
+
+					//返回按钮退出
+					var backButtonPress = 0;
+					mui.back = function(event) {
+						//如果offcanvas开着先关闭
+						if(parseInt(_self.getStyle().left) > 0) {
+							closeMenu();
+							return;
+						}
+						backButtonPress++;
+						if(backButtonPress > 1) {
+							plus.runtime.quit();
+						} else {
+							mui.toast('再按一次退出应用');
+						}
+						setTimeout(function() {
+							backButtonPress = 0;
+						}, 1000);
+						return false;
+					};
+				});
+
+				mui(".cards").on("tap", "a", function() {
+					var id = this.getAttribute("data-id");
+					var title = this.getAttribute("data-title");
+					$.openWindow({
+						id: "ques/detail",
+						url: "/ques/detail.html",
+						styles: {
+							popGesture: "none",
+							render: "always",
+							titleNView: { //详情页原生导航配置
+								backgroundColor: '#3d80da', //导航栏背景色
+								titleText: title, //导航栏标题
+								titleColor: '#fff', //文字颜色
+								autoBackButton: true, //自动绘制返回箭头
+							}
+						},
+						show: {
+							aniShow: 'slide-in-right',
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							ques_id: id
+						}
+					});
+				});
+				window.addEventListener("checkLogin", check_login); //其他页面刷新本地数据
+
+				//绘制头部
+				function init_title() {
+					//绘制顶部图标
+					_self = plus.webview.currentWebview();
+
+					var titleView = _self.getNavigationbar();
+
+					if(!titleView) {
+						titleView = plus.webview.getLaunchWebview().getNavigationbar();
+					}
+
+					titleView.drawRect("#cccccc", {
+						top: "43px",
+						height: "1px",
+						left: "0px"
+					}); //绘制底部边线
+
+					//绘制左上角menu图标
+					var bitmap_menu = new plus.nativeObj.Bitmap("menu");
+					bitmap_menu.loadBase64Data("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAKlBMVEUAAAAAev8Aev8Aev8Aev8Aev8Aev8Aev8Aev8Aev8Aev8Aev8Aev8AAABINtoqAAAADHRSTlMA/fPQ0M/e3tzs7OjgY5g4AAAAAWJLR0QAiAUdSAAAAAd0SU1FB+EBFwEbOGGUPSIAAAA2SURBVDjLY2AY9oDxDBZwCJ8EswsW4DrQ/hicgPTQZSvHAioG2h+DE5AeupyrsIDVA+0PqgEAu36BkQX5nBQAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTctMDEtMjNUMDE6Mjc6NTYrMDg6MDC8FK1uAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE3LTAxLTIzVDAxOjI3OjU2KzA4OjAwzUkV0gAAAABJRU5ErkJggg==");
+					titleView.drawBitmap(bitmap_menu, {}, {
+						top: "10px",
+						left: "10px",
+						width: "24px",
+						height: "24px"
+					});
+
+					titleView.interceptTouchEvent(true);
+					titleView.addEventListener("click", function(e) {
+						var x = e.clientX;
+						if(x < 44) { //触发menu菜单
+							var _left = parseInt(_self.getStyle().left);
+							if(_left > 0) { //处于显示状态
+								closeMenu();
+							} else {
+								openMenu();
+							}
+						}
+					}, false);
+				}
+
+				var search = document.getElementById("search");
+				//初始化分类卡
+				function init_tabs() {
+					app.request("Ques", "getQuesTitle", {}, function(res) {
+						if(res.status == 1) {
+							vue.tabs = res.data;
+							doc.getElementById("tab").style.display = "block";
+							doc.getElementById("search-box").style.display = "block";
+							//分类选择
+							mui("#tab").on("tap", "a", function() {
+								//去除已经激活tab的样式
+								var active = doc.querySelector(".active");
+								if(active)
+									active.classList.remove("active");
+								//激活当前tab卡
+								this.classList.add("active");
+								//清空内容
+								vue.items = [];
+								search.value = ""; //重置搜素哦
+								TAB_ID = this.getAttribute("data-tab-id");
+								init_index_ques();
+							});
+						} else {
+							mui.toast(res.info);
+						}
+					}, function(xhr) {
+
+					});
+				}
+
+				//监听搜索
+				search.addEventListener("keyup", function(e) {
+					if(e && e.keyCode == 13) {
+						init_index_ques();
+					}
+				});
+
+				//检测登陆状态，并刷新本地数据
+				function check_login() {
+					//直到检查登陆状态结束后才关闭载入界面和全屏
+					app.request('User', 'checkLogin', {}, function(res) {
+						//关闭载入界面和全屏
+						plus.navigator.closeSplashscreen();
+						unfullscreen();
+
+						if(res.status == 1 && res.data.token == state.token) {
+							//如果检测服务器存在且本地相对应不操作
+							app.setUserInfo(res.data); //存储服务器获取的个人信息
+							mui.fire(_offcanvas, "updateHeadInfo"); //策划菜单更新信息
+							update_user_position();
+							init_tabs();
+							init_index_ques();
+							//尚未完善资料
+							if(res.data.is_authentic == 0) {
+								toPersonal();
+							}
+						} else {
+							mui.toast(res.info);
+							return app.toLogin();
+						}
+					}, function(xhr) {
+						//关闭载入界面和全屏
+						plus.navigator.closeSplashscreen();
+						unfullscreen();
+						check.style.display = "block"; //显示重试按钮
+					}, "none");
+				}
+
+				//初始化侧滑菜单	
+				function init_offcanvs() {
+					var menu_style = {
+						left: "-70%",
+						width: '70%',
+						popGesture: "none",
+						render: "always",
+					};
+
+					_offcanvas = plus.webview.create("offcanvas.html", "offcanvas", menu_style, {});
+					_offcanvas.show(); //显示offcanvas
+
+					//启用侧滑拖拽操作，延时的原因是menu页是延时创建的，所以这里需要相应延时
+					/*
+					setTimeout(function() {
+						_self.drag({
+							direction: "right",
+							moveMode: "followFinger"
+						}, {
+							view: _offcanvas,
+							moveMode: "follow"
+						}, function(e) {});
+					}, 350);
+					*/
+				}
+
+				window.addEventListener("updateQues", init_index_ques);
+				document.addEventListener("resume", init_index_ques, false);
+				//初始化主页的需求单
+				function init_index_ques() {
+					app.request("Index", "getQues", {
+						min_id: 0,
+						tab_id: TAB_ID,
+						search: trim(search.value)
+					}, function(res) {
+						document.getElementById("list").style.display = "block";
+						$('#list').pullRefresh().endPulldown();
+						//playRefresh();
+						if(res.login == 0) {
+							mui.toast(res.info);
+							return app.toLogin();
+						}
+						if(res.status == 1) {
+							vue.items = convert(res.data);
+						}
+					}, function(xhr) {
+						$('#list').pullRefresh().endPulldown();
+						//error.innerHTML = xhr.response;
+					}, "none");
+				}
+
+				//加载更多主页需求单
+				function more_index_ques() {
+					app.request("Index", "getQues", {
+						min_id: MIN_ID,
+						tab_id: TAB_ID,
+						search: trim(search.value)
+					}, function(res) {
+						$('#list').pullRefresh().endPullup();
+						if(res.login == 0) {
+							mui.toast(res.info);
+							return app.toLogin();
+						}
+						if(res.status == 1) {
+							vue.items = vue.items.concat(convert(res.data));
+						}
+					}, function(xhr) {
+						$('#list').pullRefresh().endPullup();
+					}, "none");
+				}
+
+				function convert(items) {
+					//已经加载到没有可加载数据，结束
+					if(items.length == 0) {
+						//mui('#list').pullRefresh().endPullup(true);
+						return items;
+					}
+
+					items.forEach(function(item) {
+						item.create_time = dateUtils.format(item.create_time);
+					});
+					MIN_ID = items[items.length - 1].id;
+					return items;
+				}
+
+				refresh.addEventListener("tap", function() {
+					check.style.display = "none";
+					check_login();
+				}, false);
+
+				/*---------------------------------------------地图页相关---------------------------------------------------*/
+				//创建地图页面
+				function create_map() {
+					if(!plus.webview.getWebviewById("service/map")) {
+						_map = plus.webview.create("service/map.html", "service/map", {
+							titleNView: { //详情页原生导航配置
+								titleText: '附近需求',
+								backgroundColor: '#3d80da', //导航栏背景色
+								titleColor: '#fff', //文字颜色
+								type: 'transparent', //透明渐变样式
+								autoBackButton: true, //自动绘制返回箭头
+							}
+						});
+					}
+				}
+
+				doc.getElementById("showMap").addEventListener("tap", function() {
+					plus.nativeUI.showWaiting("定位启动中...", {
+						back: 'none'
+					}); //显示加载等待
+					create_map();
+				}, false);
+
+				//为了避免闪屏，等到地图隐藏后才绑定跳转按钮
+				window.addEventListener("showMapNow", function() {
+					_map.show("slide-in-right", 200);
+					plus.nativeUI.closeWaiting();
+					//推迟地图刷新，防止卡顿
+					setTimeout(function() {
+						mui.fire(_map, "updateMap");
+					}, 300);
+				});
+
+				/*----------------------------------offcanvas----------------------------------------------------*/
+
+				/**
+				 * 显示侧滑菜单
+				 */
+				function openMenu() {
+					plus.webview.startAnimation({
+							'view': _self,
+							'styles': {
+								'fromLeft': '0',
+								'toLeft': "70%"
+							},
+							'action': 'show'
+						}, {
+							'view': _offcanvas,
+							'styles': {
+								'fromLeft': "-70%",
+								'toLeft': '0'
+							},
+							'action': 'show'
+						},
+						function(e) {
+							//console.log(JSON.stringify(e));
+							//if(e.id == _self.id) {}
+						}.bind(this)
+					)
+				};
+				/**
+				 * 关闭菜单
+				 */
+				function closeMenu() {
+					plus.webview.startAnimation({
+							'view': _self,
+							'styles': {
+								'fromLeft': '70%',
+								'toLeft': "0"
+							},
+							'action': 'show'
+						}, {
+							'view': _offcanvas,
+							'styles': {
+								'fromLeft': "0",
+								'toLeft': '-70%'
+							},
+							'action': 'show'
+						},
+						function(e) {
+							//console.log(JSON.stringify(e));
+							//if(e.id == _self.id) {}
+						}.bind(this)
+					)
+				};
+
+				function toPersonal() {
+					mui.confirm("您还没有完善您的众帮个人资料，请点击侧滑栏个人资料进行编辑！<br><font color='red'>未完善资料情况下，您不能进行发单接单操作！</font>", "完善资料", ['稍微等等', '好的，带我去'], function(e) {
+						if(e.index == 1) {
+							$.openWindow({
+								id: 'user/personal',
+								url: 'user/personal.html'
+							});
+						}
+					}, "div");
+				}
+
+				//进图app立即先更新一下坐标
+				function update_user_position() {
+					plus.geolocation.getCurrentPosition(function(p) {
+						updatePos(new plus.maps.Point(p.coords.longitude, p.coords.latitude));
+					}, function(e) {
+
+					});
+				}
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

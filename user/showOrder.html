@@ -1,0 +1,393 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>订单详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			body,
+			.mui-content {
+				background: #fff;
+			}
+			
+			.head {
+				padding: 10px 0;
+			}
+			
+			.head {
+				margin-top: 300px;
+				height: 80px;
+			}
+			
+			.head .mui-col-xs-4 {
+				height: 60px;
+			}
+			
+			.head .mui-col-xs-8 {
+				height: 60px;
+				line-height: 60px;
+				font-size: 130%;
+				font-weight: bolder;
+				overflow: scroll;
+			}
+			
+			.head img {
+				border-radius: 10em;
+				border: solid 2px #2187E7;
+				height: 60px;
+				width: 60px;
+			}
+			
+			.info .title {
+				font-size: 120%;
+			}
+			
+			.col {
+				margin: 0 12px;
+				height: 30px;
+				overflow: scroll;
+				white-space: nowrap;
+				-webkit-user-select: text;
+			}
+			
+			.info .order {
+				padding-top: 10px;
+			}
+			
+			#map {
+				position: absolute;
+				top: 0;
+				width: 100%;
+				height: 300px;
+				background: #3A7FDA;
+				overflow: hidden;
+			}
+			
+			.doing {
+				background: #FFB400;
+				color: #fff;
+			}
+			
+			.done {
+				background: #4CD964;
+				color: #fff;
+			}
+			
+			.loading-map {
+				text-align: center;
+				display: none;
+			}
+			
+			.loading-map p {
+				color: #fff;
+				display: block;
+				font-size: 1.2em;
+			}
+			
+			.loading-map img {
+				width: 100%;
+			}
+			
+			.price {
+				color: red;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="map" id="map">
+				<div class="loading-map" id="loading-map">
+					<img src="../images/maploading.gif" alt="" />
+				</div>
+			</div>
+			<div class="head">
+				<div class="mui-row">
+					<div class="mui-col-xs-4 mui-text-center">
+						<img class="" v-bind:src="item.my_icon_sm" alt="" onerror="this.src='../images/my_icon.jpg'" />
+					</div>
+					<div class="mui-col-xs-8">
+						{{item.user_name}}
+					</div>
+				</div>
+			</div>
+
+			<div class="info">
+				<div class="mui-row title">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell" id="showQues">
+							<a v-bind:data-qid="item.qid" class="mui-padding-horizontal">
+								需求：{{item.title}}<span class="price mui-pull-right" v-show="item.price">￥{{item.price}}</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="mui-row user mui-padding-vertical-sm">
+					<div class="mui-col-xs-6">
+						<div class="mui-row col">
+							<i class="mui-icon mui-icon-person-filled">&nbsp;</i>{{item.real_name}}
+						</div>
+						<div class="mui-row col">
+							<i class="mui-icon mui-icon-location-filled">&nbsp;</i> {{item.province}}&nbsp;{{item.city}}&nbsp;{{item.county}}
+						</div>
+						<div class="mui-row col">
+							<i class="mui-icon icon-linkedin-sign">&nbsp;</i> {{item.actor}}
+						</div>
+						<div class="mui-row col">
+							<i class="mui-icon icon-male">&nbsp;</i> {{item.sex}}
+						</div>
+					</div>
+					<div class="mui-col-xs-6">
+						<div class="mui-row col">
+							<i class="mui-icon mui-icon-phone-filled">&nbsp;</i>{{item.phone}}
+						</div>
+						<div class="mui-row col">
+							<i class="mui-icon mui-icon-qq">&nbsp;</i>{{item.qq}}
+						</div>
+						<div class="mui-row col">
+							<i class="mui-icon mui-icon-weixin">&nbsp;</i>{{item.weixin}}
+						</div>
+						<div class="mui-row col">
+							<i class="mui-icon mui-icon-email-filled">&nbsp;</i>{{item.email}}
+						</div>
+					</div>
+				</div>
+				<div class="mui-row order" id="order_state">
+					<div class="mui-col-xs-6">
+						<div class="mui-row col">
+							接单状态
+						</div>
+						<div class="mui-row col">
+							{{item.state}}
+						</div>
+					</div>
+					<div class="mui-col-xs-6">
+						<div class="mui-row col">
+							接单时间
+						</div>
+						<div class="mui-row col">
+							{{item.create_time}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script type="text/javascript">
+			(function($, doc) {
+				$.init()
+				var vue = new Vue({
+					el: ".mui-content",
+					data: {
+						item: {}
+					}
+				});
+
+				var map = null;
+				var map_icon = null;
+				var map_marker = null;
+				$.plusReady(function() {
+					app.log();
+
+					var order_id = plus.webview.currentWebview().order_id; //取得用户选取的订单号
+
+					var oldBack = $.back;
+					$.back = function() {
+						//推出前清空地图
+						if(map) {
+							map.showUserLocation(false);
+						}
+						oldBack();
+					}
+					//晚加载信息，防止卡顿
+					setTimeout(function() {
+						init_order(order_id);
+					}, 500);
+				});
+
+				//初始化订单
+				function init_order(id) {
+					document.getElementById("loading-map").style.display = "block";
+					app.request("QuesOrder", "pickerShowOrder", {
+						id: id
+					}, function(res) {
+						if(res.login == 0) {
+							mui.toast(res.info);
+							return app.toLogin();
+						}
+						if(res.status == 1) {
+							vue.item = convert(res.data);
+							init_map();
+							init_map_icon();
+						} else {
+							mui.toast(res.info);
+							$.back();
+						}
+					}, function(xhr) {});
+
+				}
+
+				//转换
+				function convert(item) {
+					theme = doc.getElementById("order_state");
+					if(item.state == 0) {
+						theme.classList.add("doing");
+						item.state = "进行中";
+					} else if(item.state == 1) {
+						theme.classList.add("done");
+						item.state = "已完成";
+					}
+					item.create_time = app.getLocalTime(item.create_time);
+					return item;
+				}
+
+				//初始化地图标记头像
+				function init_map_icon() {
+					var mk = vue.item;
+					if(!mk.my_icon_sm || mk.my_icon_sm == "") {
+						map_icon = "../images/my_icon_35.jpg";
+					} else {
+						app.baseImgFile(mk.user_name, mk.my_icon_sm, 100, function(i) {
+							//缩放图片，图片比附近地图更小
+							plus.zip.compressImage({
+									src: i.target,
+									dst: "_doc/kehu.jpg",
+									width: "60%", // 缩小到原来的一半
+									overwrite: true
+								},
+								function(e) {
+									map_icon = e.target;
+								},
+								function(error) {
+									map_icon = i.target;
+								});
+						});
+					}
+				}
+
+				//初始化地图
+				function init_map() {
+					plus.geolocation.getCurrentPosition(function(p) {
+						//自己位置
+						var pStart = new plus.maps.Point(p.coords.longitude, p.coords.latitude);
+						//上传至服务器
+						updatePos(pStart);
+
+						//建立地图
+						map = new plus.maps.Map("map", {
+							center: pStart,
+							zoom: 15,
+						});
+
+						//实时显示用户位置
+						map.showUserLocation(true);
+
+						var mk = vue.item;
+						//目标地址
+						var pEnd = new plus.maps.Point(mk.longitude, mk.latitude);
+
+						//检索从自己位置到目标位置的路线
+						var searchObj = new plus.maps.Search(map);
+						searchObj.onRouteSearchComplete = function(state, result) {
+							if(state == 0) {
+								//默认添加第一条路线
+								map.addOverlay(result.getRoute(0));
+								map.centerAndZoom(result.startPosition.point, 16);
+							} else if(state == -1)
+								mui.toast("无法规划合适路线，请拨打电话");
+							else
+								mui.toast("路线方案查找失败，请确认打开GPS，并获得权限，稍后重试！");
+						}
+						searchObj.walkingSearch(pStart, "", pEnd, "");
+
+						//继续监控位置变化
+						plus.geolocation.watchPosition(function(p) {
+							var ps = new plus.maps.Point(p.coords.longitude, p.coords.latitude);
+							updatePos(ps, function() {
+								findPosById(vue.item.quid); //每次更新自己位置后获取对方位置
+							});
+						}, function(e) {
+							console.log('Geolocation error: ' + e.message);
+						}, {
+							enableHighAccuracy: true,
+							maximumAge: 5000
+						});
+					}, function(e) {
+						alert("定位失败，未开启设备GPS或GPS无权限获得！无法打开地图", "定位错误", "好的", "div");
+					});
+
+				}
+
+				//获取对方位置
+				function findPosById(id) {
+					//读取对方位置
+					app.request('Service', 'findPosById', {
+						'id': id
+					}, function(res) {
+						//服务器方登陆失效
+						if(res.login == 0) {
+							mui.toast(res.info);
+							return app.toLogin(res.info);
+						}
+						if(res.status == 1) {
+							//获取到对方新位置立即标记下来
+							changeMapOverlays(res.data);
+						} else {
+							mui.toast(res.info);
+						}
+					}, function(xhr) {}, "none");
+				}
+
+				//传入p为标记位置
+				function changeMapOverlays(p) {
+					//清空原来标记物
+					if(map_marker)
+						map.removeOverlay(map_marker);
+
+					//重新安放标记的新位置
+					//对方标记地址
+					var pEnd = new plus.maps.Point(p.longitude, p.latitude);
+					map_marker = new plus.maps.Marker(pEnd);
+
+					//点击弹出姓名
+					var bubble = new plus.maps.Bubble(vue.item.user_name);
+					map_marker.setBubble(bubble);
+					map_marker.bringToTop();
+					map_marker.setIcon(map_icon);
+					map.addOverlay(map_marker); //添加新标记
+				}
+
+				document.getElementById("showQues").addEventListener("tap", function() {
+					var id = vue.item.qid
+					var title = vue.item.title;
+					$.openWindow({
+						id: "ques/detail",
+						url: "/ques/detail.html",
+						styles: {
+							popGesture: "none",
+							titleNView: { //详情页原生导航配置
+								backgroundColor: '#3d80da', //导航栏背景色
+								titleText: title, //导航栏标题
+								titleColor: '#fff', //文字颜色
+								autoBackButton: true, //自动绘制返回箭头
+							}
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							ques_id: id
+						}
+					})
+				});
+			}(mui, document))
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>附近的人</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			body,
+			.mui-content {
+				background: #fff;
+			}
+			
+			#map {
+				width: 100%;
+				position: fixed;
+				top: 0px;
+				bottom: 0px;
+				line-height: 200px;
+				text-align: center;
+				background: #FFFFFF;
+			}
+			
+			div.loading {
+				margin-top: 40%;
+				text-align: center;
+				padding: 10%;
+			}
+			
+			.loading img {
+				margin: 20px;
+				width: 5em;
+			}
+			
+			.refresh {
+				width: 3em;
+				margin: 0 auto;
+				display: none;
+			}
+			
+			#progress {
+				padding: 5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<map id="map"></map>
+			<div class="loading" id="loading">
+				<img src="../images/baidumap.png" />
+				<div id="progress" class="mui-progressbar">
+					<span></span>
+				</div>
+				<p class="mui-margin-vertical">地图生成中...</p>
+			</div>
+			<img class="refresh" id="refresh" src="../images/refresh.png" alt="" />
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var map = null;
+			//地图加载进度条
+			var map_progress = mui("#progress").progressbar();
+			//当地图加载出现问题，刷新按钮
+			var refresh = document.getElementById("refresh");
+
+			mui.plusReady(function() {
+				if(!map) {
+					//预先定位到指定位置
+					var index_view = plus.webview.getWebviewById("index");
+					map = new plus.maps.Map("map");
+					map.hide();
+					//监听其他页面对地图刷新事件
+					window.addEventListener("updateMap", updateMap);
+					mui.fire(index_view, "showMapNow");
+				}
+			});
+
+			refresh.addEventListener("tap", function() {
+				map_progress.setProgress(0); //重置进度条
+				this.style.display = "none";
+				updateMap();
+			}, false);
+
+			//更新地图
+			function updateMap() {
+				map.clearOverlays(); //清空原来标记
+				//显示加载进度条等
+				map_progress.setProgress(15); //刚开始15%
+				map.getUserLocation(function(state, pos) {
+					map_progress.setProgress(20); //取得用户位置20%
+					if(state == 0) {
+						//上传至服务器刷新position
+						updateOwnPos(pos, function() {
+							map_progress.setProgress(40); //坐标上传服务器30%
+							//获得地图上的其他人;
+							getMapUsers(function(data) {
+								map_progress.setProgress(80) //取得用户数据50%
+								//已获得须在地图显示的用户数据，标记到地图上
+								for(var i = 0; i < data.length; i++) {
+									addMarker({
+										pos: new plus.maps.Point(data[i].longitude, data[i].latitude),
+										ques: data[i].count_que,
+										icon: data[i].my_icon_sm,
+										id: data[i].id,
+									}, function(mk) {
+										map.addOverlay(mk);
+										map.centerAndZoom(pos, 16);
+										map_progress.setProgress(100);
+										//全部完成标记并且进度条加载100%后500ms才显示地图，视觉效果较好
+										setTimeout(function() {
+											map.show();
+										}, 100);
+									});
+								}
+							});
+						});
+					} else {
+						mui.toast("您的坐标获取失败！请检查GPS和软件权限");
+						refresh.style.display = "block";
+					}
+				});
+
+			}
+
+			//创建地图标记
+			/*
+			 * @obj,传入的是对象，包含pos,bubble,icon,id,label,分别是用户坐标，个性签名，小头像，id，user_name+actor
+			 */
+			function addMarker(obj, callback) {
+				callback = callback || $.noop;
+				var marker = new plus.maps.Marker(obj.pos); //制作标记
+				if(obj.ques > 0) {
+					marker.setLabel(obj.ques + "个需求单"); //取得个性签名
+				}
+				marker.onclick = function() {
+					floatWebview(obj.id);
+				}
+				marker.bringToTop(); //标记在最上层
+				//base64转成图片文件，setIcon要求本地图片文件
+				//用户没有头像则使用默认头像
+				if(!obj.icon || obj.icon == "") {
+					marker.setIcon("../images/my_icon_70.jpg");
+					return callback(marker); //完成后回调marker
+				}
+				//转换图片为文件格式
+				app.baseImgFile(obj.id, obj.icon, 100, function(i) {
+					marker.setIcon(i.target);
+					return callback(marker); //完成后回调marker
+				});
+			}
+
+			//更新个人坐标，上传至服务器
+			function updateOwnPos(pos, callback) {
+				updatePos(pos, callback(), function() {
+					refresh.style.display = "block";
+				})
+			}
+
+			function getMapUsers(callback) {
+				callback = callback || $.noop;
+				//取得登陆信息上传一下定位
+				app.request('Service', 'map', {}, function(res) {
+					//服务器方登陆失效
+					if(res.login == 0)
+						app.toLogin(res.info);
+
+					if(res.status == 1) {
+						//回掉一个函数
+						return callback(res.data);
+					} else {
+						return mui.toast(res.info);
+					}
+				}, function() {
+					mui.toast("请求附近的人失败，无法打开地图！");
+					refresh.style.display = "block";
+				}, "none");
+			}
+
+			var floatw = null;
+			//显示附近人信息的悬浮窗口
+			function floatWebview(user_id) {
+				if(floatw) { // 避免快速多次点击创建多个窗口
+					return;
+				}
+				floatw = plus.webview.create("floatUser.html", "service/floatUser", {
+					width: '280px',
+					height: '400px',
+					margin: "auto",
+					background: "rgba(0,0,0,0.8)",
+					scrollIndicator: 'none',
+					scalable: false,
+					popGesture: 'none',
+					render: 'always'
+				}, {
+					user_id: user_id
+				});
+				floatw.addEventListener("loaded", function() {
+					floatw.show('fade-in', 200);
+					floatw = null;
+				}, false);
+			}
+		</script>
+	</body>
+
+</html>

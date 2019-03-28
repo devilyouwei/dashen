@@ -1,0 +1,734 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>个人信息</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<link href="../css/mui.picker.min.css" rel="stylesheet" />
+		<link href="../css/mui.poppicker.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-views,
+			.mui-view,
+			.mui-pages,
+			.mui-page,
+			.mui-page-content {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				width: 100%;
+				height: 100%;
+				background-color: #efeff4;
+			}
+			
+			.text-gray {
+				color: #888888;
+			}
+			
+			.mui-pages {
+				top: 66px;
+				height: auto;
+			}
+			
+			.mui-page.mui-transitioning {
+				-webkit-transition: -webkit-transform 300ms ease;
+				transition: transform 300ms ease;
+			}
+			
+			.mui-page-left {
+				-webkit-transform: translate3d(0, 0, 0);
+				transform: translate3d(0, 0, 0);
+			}
+			
+			.mui-ios .mui-page-left {
+				-webkit-transform: translate3d(-20%, 0, 0);
+				transform: translate3d(-20%, 0, 0);
+			}
+			
+			.mui-navbar {
+				position: fixed;
+				right: 0;
+				left: 0;
+				z-index: 10;
+				height: 64px;
+				background-color: #f7f7f8;
+			}
+			
+			.mui-navbar .mui-bar {
+				position: absolute;
+				background: transparent;
+				text-align: center;
+			}
+			
+			.mui-android .mui-navbar-inner.mui-navbar-left {
+				opacity: 0;
+			}
+			
+			.mui-ios .mui-navbar-left .mui-left,
+			.mui-ios .mui-navbar-left .mui-center,
+			.mui-ios .mui-navbar-left .mui-right {
+				opacity: 0;
+			}
+			
+			.mui-navbar .mui-btn-nav {
+				-webkit-transition: none;
+				transition: none;
+				-webkit-transition-duration: .0s;
+				transition-duration: .0s;
+			}
+			
+			.mui-navbar .mui-bar .mui-title {
+				display: inline-block;
+				width: auto;
+			}
+			
+			.mui-page-shadow {
+				position: absolute;
+				right: 100%;
+				top: 0;
+				width: 16px;
+				height: 100%;
+				z-index: -1;
+				content: '';
+			}
+			
+			.mui-page-shadow {
+				background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+				background: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, .01) 50%, rgba(0, 0, 0, .2) 100%);
+			}
+			
+			.mui-navbar-inner.mui-transitioning,
+			.mui-navbar-inner .mui-transitioning {
+				-webkit-transition: opacity 300ms ease, -webkit-transform 300ms ease;
+				transition: opacity 300ms ease, transform 300ms ease;
+			}
+			
+			.mui-page {
+				display: none;
+			}
+			
+			.mui-pages .mui-page {
+				display: block;
+			}
+			
+			.mui-page .mui-table-view:first-child {
+				margin-top: 20px;
+			}
+			
+			.mui-page .mui-table-view:last-child {
+				margin-bottom: 20px;
+			}
+			
+			.mui-fullscreen {
+				position: fixed;
+			}
+			
+			.mui-ios .mui-navbar .mui-bar .mui-title {
+				position: static;
+			}
+			.readonly{
+				background: #000;
+			}
+		</style>
+	</head>
+
+	<body onresize="document.activeElement.scrollIntoView(true);">
+		<!--页面主结构开始-->
+		<div id="personal" class="mui-views mui-fullscreen mui-control-content mui-active">
+			<div class="mui-view">
+				<div class="mui-navbar">
+				</div>
+				<div class="mui-pages">
+				</div>
+			</div>
+		</div>
+
+		<!--查看个人资料-->
+		<div id="main" class="mui-page">
+			<div class="mui-navbar-inner mui-bar mui-bar-nav">
+				<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+					<span class="mui-icon mui-icon-left-nav"></span>返回
+				</button>
+				<a href="#edit" id="to_edit" class="mui-right mui-btn mui-btn-link mui-btn-nav mui-pull-right mui-hidden">
+					<span class="mui-icon mui-icon-compose"></span>编辑
+				</a>
+				<h1 class="mui-center mui-title">个人资料<h1>
+			</div>
+
+			<div class="mui-page-content">
+				<div class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<ul class="mui-table-view mui-table-view-chevron">
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">用户名</div>
+						        		<div class="mui-col-xs-8" id="user_name"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">生日</div>
+						        		<div class="mui-col-xs-8" id="birth"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">性别</div>
+						        		<div class="mui-col-xs-8" id="sex"></div>
+						        	</div>
+						        </li>
+						        <!--
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">感情</div>
+						        		<div class="mui-col-xs-8" id="love_stat"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">学历</div>
+						        		<div class="mui-col-xs-8" id="education"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">大学</div>
+						        		<div class="mui-col-xs-8" id="university"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">院系</div>
+						        		<div class="mui-col-xs-8" id="faculty"></div>
+						        	</div>
+						        </li>
+						        -->
+
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">所在地</div>
+						        		<div class="mui-col-xs-8 mui-row" id="location">
+						        			<div class="mui-col-xs-4" id="province"></div>
+						        			<div class="mui-col-xs-4" id="city"></div>
+						        			<div class="mui-col-xs-4" id="county"></div>
+						        		</div>
+						        	</div>
+						        </li>
+
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">身份</div>
+						        		<div class="mui-col-xs-8" id="actor"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">姓名</div>
+						        		<div class="mui-col-xs-8" id="real_name"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-divider"></li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">邮箱</div>
+						        		<div class="mui-col-xs-8" id="email"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">电话</div>
+						        		<div class="mui-col-xs-8" id="phone"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">QQ号</div>
+						        		<div class="mui-col-xs-8" id="qq"></div>
+						        	</div>
+						        </li>
+						        <li class="mui-table-view-cell">
+						        	<div class="mui-row">
+						        		<div class="mui-col-xs-4 text-gray">微信</div>
+						        		<div class="mui-col-xs-8" id="weixin"></div>
+						        	</div>
+						        </li>
+						    </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--编辑个人资料-->
+		<div id="edit" class="mui-page">
+			<div class="mui-navbar-inner mui-bar mui-bar-nav">
+				<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+					<span class="mui-icon mui-icon-left-nav"></span>返回
+				</button>
+				<button id="sub_edit" type="button" class="mui-anchorui-btn  mui-btn-link mui-btn-nav mui-pull-right">
+					完成
+				</button>
+				<h1 class="mui-center mui-title">修改资料</h1>
+			</div>
+
+			<div class="mui-page-content">
+				<div class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<form class="mui-input-group" name="edit_form" id="edit_form">
+							<div class="mui-input-row">
+								<label class="text-gray">昵称</label>
+								<input type="text" name='user_name' class="mui-input-clear"/>
+							</div>
+							<div class="mui-input-row">
+								<label class="text-gray">生日</label>
+								<input type="text" id="datePicker" name='birth' readonly/>
+							</div>
+							<div class="mui-input-row">
+								<label class="text-gray">性别</label>
+								<select name="sex">
+									<option value="男">男</option>
+									<option value="女">女</option>
+								</select>
+							</div>
+							<!--
+							<div class="mui-input-row">
+								<label class="text-gray">感情</label>
+								<select name="love_stat">
+									<option value="单身">单身</option>
+									<option value="恋爱">恋爱</option>
+									<option value="已订婚">已订婚</option>
+									<option value="已婚">已婚</option>
+									<option value="搞基">搞基</option>
+									<option value="有炮友">有炮友</option>
+									<option value="分手">分手</option>
+									<option value="离婚">离婚</option>
+									<option value="丧偶">丧偶</option>
+								</select>
+							</div>
+							<div class="mui-input-row">
+								<label class="text-gray">学历</label>
+								<select name="education">
+									<option value="小学">小学</option>
+									<option value="初中">初中</option>
+									<option value="高中/职高/中专/技校">高中/职高/中专/技校</option>
+									<option value="大专">大专</option>
+									<option value="大本">大本</option>
+									<option value="硕士">硕士</option>
+									<option value="博士">博士</option>
+								</select>
+							</div>
+							<div class="mui-input-row">
+								<a href="#ed_univ" class="mui-navigate-right">
+									<label class="text-gray">大学</label>
+									<input type="text" name='university' placeholder="请选择学校" readonly/>
+								</a>
+							</div>
+							<div class="mui-input-row">
+								<a href="#ed_univ" class="mui-navigate-right">
+									<label class="text-gray">院系</label>
+									<input type="text" name='faculty' placeholder="选择院系" readonly/>
+								</a>
+							</div>
+							-->
+							<div class="mui-input-row">
+								<label class="text-gray">所在地</label>
+								<input type="text" id="cityPicker" name='location' readonly/>
+								<input type="hidden" name='province' />
+								<input type="hidden" name='city' />
+								<input type="hidden" name='county' />
+							</div>
+							<div class="mui-input-row">
+								<label class="text-gray">身份</label>
+								<select name="actor">
+									<option value="企业" selected>企业</option>
+									<option value="个人">个人</option>
+								</select>
+							</div>
+							<div class="mui-input-row">
+								<label class="text-gray">姓名</label>
+								<input type="text" name='real_name'  class="mui-input-clear"/>
+							</div>
+							<div class="mui-table-view-divider"></div>
+							<div class="mui-input-row">
+								<label class="text-gray">邮箱</label>
+								<input type="text" name='email'  class="mui-input-clear"/>
+							</div>
+							<div class="mui-input-row">
+								<label class="text-gray">电话</label>
+								<input type="text" name='phone' class="readonly" style="background: #ccc;" readonly="readonly"/>
+							</div>
+							<div class="mui-input-row">
+								<label class="text-gray">QQ号</label>
+								<input type="text" name='qq'  class="mui-input-clear"/>
+							</div>
+							<div class="mui-input-row">
+								<label class="text-gray">微信</label>
+								<input type="text" name='weixin'  class="mui-input-clear"/>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--大学选择-->
+		<div id="ed_univ" class="mui-page">
+			<div class="mui-navbar-inner mui-bar mui-bar-nav">
+				<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
+					<span class="mui-icon mui-icon-left-nav"></span>返回
+				</button>
+				<h1 class="mui-center mui-title">选择学校院系</h1>
+			</div>
+			<div class="mui-page">
+				<div class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell">
+								<a id="pickUnivsProvince" class="mui-navigate-right">省份</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a id="pickUnivs" class="mui-navigate-right">学校</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a id="pickUnivsFaculties" class="mui-navigate-right">院系</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/mui.view.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<script src="../js/city.data.js"></script>
+		<script src="../js/city.data-3.js"></script>
+
+		<script type="text/javascript">
+			(function($) {
+				var userInfo = new Object(); //本地存储信息，一次从服务器获得
+				mui.init({
+					swipeBack: true,
+				});
+
+				var viewApi = mui("#personal").view({
+					defaultPage: '#main'
+				});
+				var view = viewApi.view;
+
+				$.plusReady(function() {
+					app.log();
+					//延时请求，防止卡顿ui
+					setTimeout(init_user_info, 300)
+				});
+
+				document.getElementById("datePicker").addEventListener('tap', function() {
+					var self = this;
+					var dtpicker = new $.DtPicker({
+						'type': 'date',
+						'beginYear': 1949,
+					});
+					dtpicker.show(function(rs) {
+						self.value = rs.value;
+						dtpicker.dispose();
+						document.querySelector("input[name=birth]").value = rs.value;
+					});
+				}, false);
+
+				//城市级联示例------------------------------------------------------------------------------------------------------
+				var cityPicker3 = new $.PopPicker({
+					layer: 3
+				});
+				cityPicker3.setData(cityData3);
+				document.getElementById('cityPicker').addEventListener('tap', function(event) {
+					var self = this;
+					cityPicker3.show(function(items) {
+						self.value = (items[0].text || "") + " " + (items[1].text || "") + " " + (items[2].text || "");
+						//返回 false 可以阻止选择框的关闭
+						//return false;
+						document.querySelector("input[name=province]").value = items[0].text || "";
+						document.querySelector("input[name=city]").value = items[1].text || "";
+						document.querySelector("input[name=county]").value = items[2].text || "";
+					});
+				}, false);
+
+				function init_user_info() {
+					//请求个人信息（只做一次）
+					app.request('User', 'getPersonalInfo', {}, function(res) {
+						//服务器方登陆失效
+						if(res.login == 0) {
+							plus.nativeUI.toast(res.info);
+							app.clearToken();
+							app.toLogin();
+							return false;
+						}
+
+						if(res.status == 1) {
+							//列出信息
+							for(var key in res.data) {
+								var content = document.getElementById(key);
+								if(content)
+								content.innerText = res.data[key];
+							}
+							userInfo = res.data; //将获取到的用户信息存到全局变量
+							document.getElementById("to_edit").classList.remove("mui-hidden"); //数据加载后可编辑
+						} else {
+							mui.toast(res.info);
+						}
+					});
+				}
+
+				/*
+				 * 以下是main页面--------------------------------------------------------------------------------------------------
+				 */
+
+				document.getElementById("to_edit").addEventListener("tap", function() {
+					//每次从查看到编辑页面都要还原，避免用户迷糊
+					document.querySelector("input[name=user_name]").value = userInfo.user_name;
+					document.querySelector("select[name=sex]").value = userInfo.sex;
+					//document.querySelector("select[name=education]").value = userInfo.education;
+					//document.querySelector("select[name=love_stat]").value = userInfo.love_stat;
+					//document.querySelector("input[name=university]").value = userInfo.university;
+					//document.querySelector("input[name=faculty]").value = userInfo.faculty;
+					document.querySelector("input[name=birth]").value = userInfo.birth;
+					document.querySelector("select[name=actor]").value = userInfo.actor;
+					document.querySelector("input[name=real_name]").value = userInfo.real_name;
+					document.querySelector("input[name=email]").value = userInfo.email;
+					document.querySelector("input[name=phone]").value = userInfo.phone;
+					document.querySelector("input[name=qq]").value = userInfo.qq;
+					document.querySelector("input[name=weixin]").value = userInfo.weixin;
+					document.querySelector("input[name=location]").value = userInfo.province + " " + userInfo.city + " " + userInfo.county;
+					document.querySelector("input[name=province]").value = userInfo.province;
+					document.querySelector("input[name=city]").value = userInfo.city;
+					document.querySelector("input[name=county]").value = userInfo.county;
+
+				});
+
+				/*
+				 * 以下是修改编辑页面--------------------------------------------------------------------------------------------
+				 */
+				//准备提交修改
+				document.getElementById("sub_edit").addEventListener("tap", function() {
+					var subForm = new Object();
+
+					//由于没有jquery支持的serialize，所以分别赋值
+					subForm.user_name = trim(document.querySelector("input[name=user_name]").value);
+					subForm.sex = document.querySelector("select[name=sex]").value;
+					//subForm.love_stat = document.querySelector("select[name=love_stat]").value;
+					//subForm.education = document.querySelector("select[name=education]").value;
+					//subForm.university = document.querySelector("input[name=university]").value;
+					//subForm.faculty = document.querySelector("input[name=faculty]").value;
+					subForm.birth = document.querySelector("input[name=birth]").value;
+					subForm.province = document.querySelector("input[name=province]").value;
+					subForm.city = document.querySelector("input[name=city]").value;
+					subForm.county = document.querySelector("input[name=county]").value;
+					subForm.actor = trim(document.querySelector("select[name=actor]").value);
+					subForm.real_name = trim(document.querySelector("input[name=real_name]").value);
+					subForm.email = trim(document.querySelector("input[name=email]").value);
+					subForm.phone = trim(document.querySelector("input[name=phone]").value);
+					subForm.qq = trim(document.querySelector("input[name=qq]").value);
+					subForm.weixin = trim(document.querySelector("input[name=weixin]").value);
+					if(subForm.user_name == "")
+						return mui.toast("必须填写一个用户昵称！");
+					if(subForm.user_name.length > 8)
+						return mui.toast("用户名过长！")
+					if(subForm.actor == "")
+						return mui.toast("请填写您的职业身份");
+					if(subForm.real_name == "")
+						return mui.toast("请填写真实姓名一栏");
+					if(subForm.sex == "")
+						return mui.toast("请选择性别");
+					//if(subForm.phone != "" && !app.checkPhoneNumber(subForm.phone))
+					//	return mui.toast("手机号格式不正确！")
+					if(subForm.email != "" && !app.checkEmail(subForm.email))
+						return mui.toast("邮箱格式错误！");
+					if(subForm.qq != "" && !app.checkQQ(subForm.qq))
+						return mui.toast("qq格式不正确！")
+
+					//提交修改
+					app.request('User', 'savePersonalInfo', subForm, function(res) {
+						//服务器方登陆失效
+						if(res.login == 0) {
+							mui.toast(res.info);
+							return app.toLogin();
+						}
+
+						if(res.status == 1) {
+							mui.toast(res.info);
+							//更新查看页面的个人信息
+							for(var key in subForm) {
+								document.getElementById(key).innerText = subForm[key];
+							}
+							//刷新userInfo,省去对服务器的访问
+							userInfo = subForm;
+							//修改本地缓存中user_name
+							var localdata = app.getUserInfo();
+							localdata.user_name = userInfo.user_name;
+							app.setUserInfo(localdata);
+							//获得offcanvas界面的webview
+							var view = plus.webview.getWebviewById('offcanvas');
+							//触发列表界面的自定义事件（refresh）,从而进行数据刷新
+							mui.fire(view, 'updateHeadInfo');
+						} else {
+							mui.toast(res.info);
+							return false;
+						}
+						mui.back();
+					});
+				});
+
+				/*
+				 * 以下是编辑大学和院系的单独页面(联动实现)------------------------------------------------------------------------------
+				 */
+				//两个临时存储变量，存储下一个目标的需要的id索引
+				var province_id = 0;
+				var univs_id = 0;
+
+				//省份
+				document.getElementById("pickUnivsProvince").addEventListener("tap", function(event) {
+					var self = this;
+					//当触发省份选择按钮时请求大学的省份
+					app.request("User", "getUnivsProvince", {}, function(res) {
+						if(res.login == 0) {
+							plus.nativeUI.toast(res.info);
+							app.clearToken();
+							app.toLogin();
+							return false;
+						}
+						if(res.status == 1) {
+							//把省份处理成picker可用的数组
+							var province = new Array();
+							//存到province数组中
+							for(var key in res.data) {
+								province[key] = {
+									'value': res.data[key].id,
+									'text': res.data[key].name
+								}
+							}
+							var unisProvincePicker = new $.PopPicker();
+							unisProvincePicker.setData(province);
+							unisProvincePicker.show(function(items) {
+								self.innerText = items[0].text;
+								province_id = items[0].value; //取得联动id
+
+								//联动重置
+								document.getElementById("pickUnivs").innerText = "学校";
+								document.querySelector("input[name=university]").value = ""; //表单值重置
+								document.getElementById("pickUnivsFaculties").innerText = "院系";
+								document.querySelector("input[name=faculty]").value = ""; //表单值重置
+								univs_id = 0; //索引重置
+
+								unisProvincePicker.dispose();
+							});
+						} else {
+							plus.nativeUI.toast(res.info)
+						}
+					});
+				}, false);
+
+				document.getElementById("pickUnivs").addEventListener("tap", function(event) {
+					//当触发大学选择按钮时请求省份下的大学
+					if(province_id == 0)
+						return plus.nativeUI.toast("请先选择省份");
+
+					var self = this;
+					app.request("User", "getUnivs", {
+						'pid': province_id
+					}, function(res) {
+						if(res.login == 0) {
+							plus.nativeUI.toast(res.info);
+							app.clearToken();
+							app.toLogin();
+							return false;
+						}
+
+						if(res.status == 1) {
+							var univs = new Array();
+							//获取的存到univs数组中
+							for(var key in res.data) {
+								univs[key] = {
+									'value': res.data[key].id,
+									'text': res.data[key].name
+								}
+							}
+							var unisPicker = new $.PopPicker();
+							unisPicker.setData(univs);
+							unisPicker.show(function(items) {
+								self.innerText = items[0].text;
+								univs_id = items[0].value; //取得联动id
+								document.querySelector("input[name=university]").value = items[0].text; //传入表单
+
+								//联动清空子项目
+								document.getElementById("pickUnivsFaculties").innerText = "院系";
+								document.querySelector("input[name=faculty]").value = ""; //传入表单
+
+								unisPicker.dispose();
+							});
+						} else {
+							plus.nativeUI.toast(res.info)
+						}
+					});
+				}, false);
+
+				document.getElementById("pickUnivsFaculties").addEventListener("tap", function(event) {
+					//当触发院系选择按钮时请求所有院系
+					if(univs_id == 0)
+						return plus.nativeUI.toast("请先选择学校");
+
+					var self = this;
+
+					app.request("User", "getUnivsFaculties", {
+						'uid': univs_id
+					}, function(res) {
+						if(res.login == 0) {
+							plus.nativeUI.toast(res.info);
+							app.clearToken();
+							app.toLogin();
+							return false;
+						}
+
+						if(res.status == 1) {
+							var faculty = new Array();
+							//获取的院系存到faculty数组中
+							for(var key in res.data) {
+								faculty[key] = {
+									'value': res.data[key].id,
+									'text': res.data[key].name
+								}
+							}
+							var facultyPicker = new $.PopPicker();
+							facultyPicker.setData(faculty);
+							facultyPicker.show(function(items) {
+								self.innerText = items[0].text;
+								document.querySelector("input[name=faculty]").value = items[0].text; //传入表单
+								facultyPicker.dispose();
+							});
+						} else {
+							plus.nativeUI.toast(res.info)
+						}
+					});
+				}, false);
+
+				//处理view的后退与webview后退
+				var oldBack = $.back;
+				$.back = function() {
+					if(viewApi.canBack()) { //如果view可以后退，则执行view的后退
+						viewApi.back();
+					} else { //执行webview后退
+						oldBack();
+					}
+				};
+
+				mui('.mui-scroll-wrapper').scroll({
+					deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+				});
+			})(mui);
+		</script>
+	</body>
+
+</html>

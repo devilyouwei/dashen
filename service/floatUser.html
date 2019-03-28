@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/style.css" />
+		<link rel="stylesheet" type="text/css" href="../css/font-awesome.css" />
+		<style>
+			body {
+				background: #fff;
+			}
+			
+			#loading,
+			#user {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				right: 0;
+				left: 0;
+				background: #fff;
+			}
+			
+			.hidden {
+				z-index: -1;
+			}
+			
+			.header {
+				height: 30%;
+				width: 100%;
+				background: #F5CECD url(../images/floatbg.jpg) no-repeat fixed center;
+			}
+			
+			.header img {
+				width: 4em;
+				border: solid 3px #009CDA;
+				border-radius: 10em;
+				position: relative;
+				top: 67%;
+				left: 50%;
+				margin-left: -2em;
+				bottom: 0;
+				z-index: 100;
+			}
+			
+			.content {}
+			
+			.content h4 {
+				margin-top: 12%;
+				text-align: center;
+				font-size: 1em;
+				font-weight: normal;
+			}
+			
+			.content p {
+				text-align: center;
+				font-size: .8em;
+			}
+			
+			.loading img {
+				width: 100%;
+				display: block;
+			}
+			
+			.loading p {
+				text-align: center;
+				padding: 1.2em;
+				font-size: 1.2em;
+				font-weight: bold;
+			}
+			
+			.close {
+				position: absolute;
+				z-index: 999;
+				right: 3px;
+				top: 3px;
+				color: #C0C0C0;
+				font-weight: bold;
+				font-size: 1.7em;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<i class="mui-icon mui-icon-close close" id="close"></i>
+			<div class="loading" id="loading">
+				<img src="../images/load.gif" alt="" />
+				<p>加载中</p>
+			</div>
+
+			<div id="user" class="hidden">
+				<div class="header" id="header">
+					<img v-bind:src='user.my_icon' alt="" onerror="this.src='../images/my_icon.jpg'"/>
+				</div>
+				<div class="content" id="content">
+					<h4 class="mui-padding-vertical-xs">{{user.user_name}}</h4>
+					<p>"{{user.signature}}"</p>
+					<p>{{user.province}}&nbsp;{{user.city}}&nbsp;{{user.county}}</p>
+					<p>{{user.actor}}</p>
+					<p>{{user.sex}}&nbsp;&nbsp;{{user.love_stat}}</p>
+					<p>{{user.university}}&nbsp;&nbsp;{{user.education}}</p>
+					<div class="mui-text-center">
+						<button class="mui-btn mui-btn-primary mui-btn-mini" id="toHome">&nbsp;&nbsp;TA的需求&nbsp;&nbsp;</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script type="text/javascript">
+			mui.init()
+
+			var loading = document.getElementById("loading");
+			var homeView = null;
+			mui.plusReady(function() {
+				app.log();
+				var _self = plus.webview.currentWebview();
+				var id = _self.user_id;
+				setTimeout(function() {
+					get_user_intro(id);
+				}, 300);
+			});
+			document.getElementById("close").addEventListener("tap", function() {
+				mui.back();
+			}, false)
+
+			//取得用户信息
+			function get_user_intro(id) {
+				app.request("Service", "getIntro", {
+					'id': id
+				}, function(res) {
+					if(res.login == 0) {
+						plus.nativeUI.toast(res.info);
+						app.clearToken();
+						app.toLogin();
+					}
+					if(res.status == 1) {
+						new Vue({
+							el: '#user',
+							data: {
+								user: res.data
+							}
+						})
+						loading.style.display = "none";
+						document.getElementById("toHome").addEventListener("tap", function() {
+							toHome(res.data);
+						}, false);
+					} else {
+						mui.back();
+						mui.toast(res.info);
+					}
+				}, function() {
+					mui.back();
+				}, "none");
+			}
+
+			function toHome(user) {
+				mui.openWindow({
+					id: "service/home",
+					url: "home.html",
+					styles: {
+						popGesture: "none",
+						render: "always",
+						titleNView: { //详情页原生导航配置
+							titleText: user.user_name + "的需求表", //导航栏标题
+							backgroundColor: '#3d80da', //导航栏背景色
+							titleColor: '#fff', //文字颜色
+							type: 'transparent', //透明渐变样式
+							autoBackButton: true, //自动绘制返回箭头
+						}
+					},
+					show: {
+						autoShow: true, //页面loaded事件发生后自动显示，默认为true
+						aniShow: 'slide-in-right',
+						duration: 300,
+					},
+					waiting: {
+						autoShow: false
+					},
+					extras: {
+						user: user
+					}
+				});
+
+			}
+		</script>
+	</body>
+
+</html>

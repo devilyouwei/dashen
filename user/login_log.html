@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>最近登陆记录</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">最近登陆记录</h1>
+		</header>
+		<div class="mui-content" id="list_content">
+			<!--登陆记录列表，js动态插入-->
+			<p class="mui-margin-sm">登陆记录删除后不可恢复</p>
+		</div>
+
+		<div id="delete" class="mui-popover mui-popover-action mui-popover-bottom">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell mui-popover">
+					删除登陆记录后不可恢复
+				</li>
+				<li class="mui-table-view-cell">
+					<a style="color: #FF3B30;" id="delBtn" value="">删除信息</a>
+				</li>
+			</ul>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a href="#delete"><b>取消</b></a>
+				</li>
+			</ul>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script type="text/javascript">
+			(function($, doc) {
+				mui.init()
+
+				$.plusReady(function() {
+					app.log();
+					//请求登陆记录
+					app.request("User", "getLoginLog", {}, function(res) {
+						if(res.login == 0) {
+							mui.toast(res.info);
+							app.clearToken();
+							app.toLogin();
+							return false;
+						}
+						if(res.status == 1) {
+							var content = document.getElementById("list_content");
+							var ul = document.createElement("ul");
+							ul.classList.add("mui-table-view");
+							content.appendChild(ul);
+
+							var log = res.data; //遍历插入登陆日志行
+							for(var i = 0; i < log.length; i++) {
+								var li = document.createElement("li");
+								li.classList.add("mui-table-view-cell", "mui-media");
+								var a = document.createElement("a");
+								a.id = log[i].id; //a标签的id设置为日志行的主键id
+								var img = document.createElement("img");
+								img.classList.add("mui-media-object", "mui-pull-left");
+								var div = document.createElement("div");
+								div.classList.add("mui-media-body");
+								var p = document.createElement("p");
+								p.classList.add("mui-ellipsis");
+								var span = document.createElement("span");
+								if(log[i].os.indexOf("Android") != '-1')
+									img.src = "../images/android.jpg";
+								else if(log[i].os.indexOf("Apple") != '-1')
+									img.src = "../images/apple.jpg";
+								else if(log[i].os.indexOf("Linux") != '-1')
+									img.src = "../images/linux.jpg";
+								else if(log[i].os.indexOf("Windows") != '-1')
+									img.src = "../images/windows.jpg";
+								else if(log[i].os.indexOf("weixinOS") != '-1')
+									img.src = "../images/weixin.png";
+								else
+									img.src = "../images/unkown.jpg";
+								span.innerText = app.getLocalTime(log[i].time) + "　IP:" + log[i].ip;
+								p.innerText = log[i].os;
+								li.appendChild(a);
+								a.appendChild(img);
+								a.appendChild(div);
+								div.appendChild(span);
+								div.appendChild(p);
+								ul.appendChild(li);
+							}
+
+							var delBtn = document.getElementById("delBtn");
+							mui("ul.mui-table-view").on("tap", "li.mui-table-view-cell>a", function() {
+								delBtn.value = this.id; //修改删除的值，传入的是log行的主键id
+								mui("#delete").popover("toggle"); //弹出actionsheet
+							});
+
+							delBtn.addEventListener("tap", delLog);
+						} else {
+							mui.toast(res.info);
+						}
+					});
+					/*-----------------------------------------------------请求结束------------------------------------*/
+				});
+
+				function delLog() {
+					var id = this.value;
+					var delNode = document.getElementById(id).parentNode; //获取a上级元素li
+					app.request("User", "delLoginLog", {
+						'id': id
+					}, function(res) {
+						if(res.login == 0) {
+							mui.toast(res.info);
+							app.clearToken();
+							app.toLogin();
+							return false;
+						}
+						if(res.status == 1) {
+							delNode.parentNode.removeChild(delNode); //删除点击的li元素
+							mui.toast(res.info);
+						} else {
+							mui.toast(res.info)
+						}
+					});
+				}
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

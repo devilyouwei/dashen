@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="ui-page-login">
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>众帮登录</title>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/icons-extra.css" rel="stylesheet" />
+		<link href="css/style.css" rel="stylesheet" />
+		<style>
+			.area {
+				margin: 20px auto 0px auto;
+			}
+			
+			.mui-input-group {
+				margin-top: 10px;
+			}
+			
+			.mui-input-group:first-child {
+				margin-top: 20px;
+			}
+			
+			.mui-input-group label {
+				width: 22%;
+			}
+			
+			.mui-input-row label~input,
+			.mui-input-row label~select,
+			.mui-input-row label~textarea {
+				width: 78%;
+			}
+			
+			.mui-checkbox input[type=checkbox],
+			.mui-radio input[type=radio] {
+				top: 6px;
+			}
+			
+			.mui-content-padded {
+				margin-top: 25px;
+			}
+			
+			.mui-btn {
+				padding: 10px;
+			}
+			
+			.link-area {
+				display: block;
+				margin-top: 25px;
+				text-align: center;
+			}
+			
+			.spliter {
+				color: #bbb;
+				padding: 0px 8px;
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<p class="mui-margin-vertical"></p>
+			<span class="progress"></span>
+			<form id='login-form' class="mui-input-group">
+				<div class="mui-input-row">
+					<label>手机</label>
+					<input id='phone' type="number" class="mui-input-clear" placeholder="请输入手机号">
+				</div>
+				<div class="mui-input-row">
+					<label>密码</label>
+					<input id='user_pwd' type="password" class="mui-input-password" placeholder="请输入密码">
+				</div>
+			</form>
+			<form class="mui-input-group">
+				<ul class="mui-table-view mui-table-view-chevron">
+					<li class="mui-table-view-cell">
+						自动登录
+						<div id="autoLogin" class="mui-switch">
+							<div class="mui-switch-handle"></div>
+						</div>
+					</li>
+				</ul>
+			</form>
+			<div class="mui-content-padded">
+				<button id='login' data-loading-icon="mui-spinner mui-spinner-white" data-loading-text="登陆中" class="mui-btn mui-btn-block mui-btn-primary">登录</button>
+				<div class="link-area">
+					<a id='reg'>注册账号</a> <span class="spliter">|</span>
+					<a id='forgetPassword'>忘记密码</a>
+				</div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/mui.enterfocus.js"></script>
+		<script src="js/app.js"></script>
+		<script>
+			(function($, doc) {
+				$.init();
+
+				var settings = app.getSettings();
+				var state = app.getState();
+
+				$.plusReady(function() {
+					app.log();
+
+					//判断登录状态，已登录则直接跳转到主页
+					if(settings.autoLogin && state.token) {
+						setTimeout(function() {
+							toIndex();
+						}, 0);
+					} else {
+						//立刻关闭 splash
+						plus.navigator.closeSplashscreen();
+						unfullscreen();
+					}
+
+					//退出应用
+					var backButtonPress = 0;
+					$.back = function(event) {
+						backButtonPress++;
+						if(backButtonPress > 1) {
+							plus.runtime.quit();
+						} else {
+							mui.toast('再按一次退出应用');
+						}
+						setTimeout(function() {
+							backButtonPress = 0;
+						}, 1000);
+						return false;
+					};
+				});
+
+				//按钮
+				var loginButton = doc.getElementById('login');
+				var autoLoginButton = doc.getElementById("autoLogin");
+				var regButton = doc.getElementById('reg');
+				var forgetButton = doc.getElementById('forgetPassword');
+
+				var phone = doc.getElementById('phone');
+				var user_pwd = doc.getElementById('user_pwd');
+				loginButton.addEventListener('tap', function(event) {
+					var loginInfo = {
+						phone: phone.value,
+						user_pwd: user_pwd.value,
+						os: plus.os.name + "," + plus.os.vendor + "," + plus.os.version + "," + plus.os.language + "," + plus.device.model,
+						network: plus.networkinfo.getCurrentType(),
+					};
+
+					if(!app.checkPhoneNumber(loginInfo.phone)) {
+						mui.toast('请输入正确的手机号码');
+						return false;
+					}
+					if(loginInfo.user_pwd.length < 6) {
+						mui.toast('密码不少于6位');
+						return false;
+					}
+					//按钮显示为等待
+					var loadbtn = mui(this);
+					//请求登录
+					loadbtn.button("loading");
+					app.request("User", "login", loginInfo, function(res) {
+						loadbtn.button("reset");
+						if(res.status == 0)
+							mui.toast(res.info);
+						else {
+							app.setState(res.data); //本地保存token
+							plus.nativeUI.toast(res.info);
+							toIndex();
+						}
+					},function(xhr){
+						loadbtn.button("reset");
+					},"none");
+				});
+
+				$.enterfocus('#login-form input', function() {
+					$.trigger(loginButton, 'tap');
+				});
+
+				autoLoginButton.classList[settings.autoLogin ? 'add' : 'remove']('mui-active')
+				autoLoginButton.addEventListener('toggle', function(event) {
+					setTimeout(function() {
+						var isActive = event.detail.isActive;
+						settings.autoLogin = isActive;
+						app.setSettings(settings);
+					}, 50);
+				}, false);
+
+				//注册点击
+				regButton.addEventListener('tap', function(event) {
+					$.openWindow({
+						url: 'reg.html',
+						id: 'reg',
+						preload: true,
+						show: {
+							aniShow: 'pop-in',
+							duration: 300
+						},
+						styles: {
+							popGesture: 'hide',
+						},
+						waiting: {
+							autoShow: true
+						}
+					});
+				}, false);
+
+				//忘记密码点击
+				forgetButton.addEventListener('tap', function(event) {
+					$.openWindow({
+						url: 'forget_password.html',
+						id: 'forget_password',
+						preload: true,
+						show: {
+							aniShow: 'pop-in',
+							duration: 300
+						},
+						styles: {
+							popGesture: 'hide',
+						},
+						waiting: {
+							autoShow: true
+						}
+					});
+				}, false);
+
+				//主页跳转方法
+				function toIndex() {
+					$.openWindow({
+						url: 'index.html',
+						id: 'index',
+						show: {
+							aniShow: 'none',
+						},
+						styles: {
+							popGesture: "none",
+							render: "always",
+							titleNView: { //详情页原生导航配置
+								backgroundColor: '#fff', //导航栏背景色
+								titleText: '呀哦服务',
+								titleSize:'20px',
+								buttons: [{
+									fontSrc:'/fonts/mui.ttf',
+									text:'\ue263',
+									fontSize: '20px',
+									float: 'right',
+									color: '#3777D9',
+									//onclick: toAsk
+								}]
+							}
+						},
+						waiting: {
+							autoShow: false
+						},
+					});
+				}
+
+				function toAsk() {
+					$.openWindow({
+						url: 'service/ask.html',
+						id: 'service/ask',
+						show: {
+							aniShow: 'slide-in-right',
+						},
+						styles: {
+							titleNView: {
+								titleText: '需求单',
+								backgroundColor: '#3d80da',
+								titleColor: '#fff',
+								autoBackButton: true
+							},
+							render: 'always',
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+				}
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8" />
+		<title>我的钱包</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/style.css" />
+		<link rel="stylesheet" type="text/css" href="../css/font-awesome.css" />
+		<style>
+			.mui-bar,
+			.mui-bar-nav {
+				background: #3d80da;
+				border: none;
+				box-shadow: none;
+			}
+			
+			.mui-bar a,
+			.mui-bar h1 {
+				color: #fff;
+			}
+			
+			.head {
+				background: #3d80da;
+			}
+			
+			.head {
+				position: relative;
+				height: 12em;
+			}
+			
+			.head h1 {
+				text-align: center;
+				color: #F7F7F7;
+				font-weight: 100;
+			}
+			
+			.head p {
+				text-align: center;
+				font-size: 3em;
+				color: #fff;
+				height: 2em;
+				line-height: 2.8em;
+			}
+			
+			.mui-popup-input input {
+				text-align: center;
+				width: 5em;
+				font-size: 1.5em;
+				padding: 1em;
+			}
+			
+			.mui-col-xs-3 {
+				text-align: center;
+			}
+			
+			.mui-col-xs-3 span {
+				border: solid 1px gray;
+				padding: 5px 10px;
+				border-radius: 15px;
+			}
+			
+			span.active {
+				border: solid 1px orange;
+				color: orange;
+			}
+			
+			.recharge-box {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我的钱包</h1>
+		</header>
+		<div class="mui-content">
+			<div class="head">
+				<p id="my_money">0.00</p>
+				<h1>余额</h1>
+			</div>
+		</div>
+		<div class="recharge-box" id="recharge-box">
+			<form class="mui-input-group mui-padding-top-sm">
+				<p class="mui-content-padded mui-padding-vertical-sm">选择充值金额（单位：元）</p>
+				<div class="mui-row mui-margin-vertical-sm">
+					<div class="mui-col-xs-3">
+						<span class="s-price">500</span>
+					</div>
+					<div class="mui-col-xs-3">
+						<span class="s-price">1000</span>
+					</div>
+					<div class="mui-col-xs-3">
+						<span class="s-price">2000</span>
+					</div>
+					<div class="mui-col-xs-3">
+						<span class="s-price">5000</span>
+					</div>
+				</div>
+				<div class="mui-input-row mui-margin-top">
+					<label>其他金额</label>
+					<input type="number" placeholder="点击输入金额" id="order_money" name="order_money">
+				</div>
+				<div class="mui-padding">
+					<button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="askOrder">立即充值</button>
+				</div>
+			</form>
+		</div>
+		<!--
+		<ul class="mui-table-view mui-margin-vertical">
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right">
+					<i class="icon-money">&nbsp;</i>申请提现
+				</a>
+			</li>
+		</ul>
+		-->
+
+		<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			(function($, doc) {
+				//充值最小金额
+				var MIN_VALUE = 1;
+				$.init();
+				$.plusReady(function() {
+					setTimeout(init_money, 300);
+				});
+
+				//初始化金额1
+				function init_money() {
+					app.request("Money", "getMoney", {}, function(res) {
+						if(res.login == 0) {
+							mui.toast(res.info);
+							return app.toLogin();
+						}
+						if(res.status == 1) {
+							//连上网络同步钱包后显示充值界面
+							var my_money = formatPrice(res.data);
+							doc.getElementById("recharge-box").style.display = "block";
+							doc.getElementById("my_money").innerText = my_money;
+							//刷新本地钱包缓存
+							var user_info = app.getUserInfo();
+							user_info.money = my_money;
+							app.setUserInfo(user_info);
+						} else {
+							mui.toast(res.info)
+						}
+					}, function(xhr) {}, "none");
+				}
+
+				//点击固定金额
+				mui(".recharge-box").on("tap", "span", function() {
+					//去除已经激活tab的样式
+					var active = doc.querySelector(".active");
+					if(active)
+						active.classList.remove("active");
+					//激活当前tab卡
+					this.classList.add("active");
+					doc.getElementById("order_money").value = this.innerText;
+				})
+
+				//点击充值
+				doc.getElementById("askOrder").addEventListener("tap", function() {
+					askOrder(doc.getElementById("order_money").value);
+				});
+
+				function askOrder(value) {
+					if(value == "") {
+						return mui.alert("请输入充值金额！", "错误", null, null, "div");
+					}
+					var value = parseFloat(value).toFixed(2);
+					//非法字符
+					if(isNaN(value))
+						return mui.alert("禁止输入非法金额字符！", "错误", null, null, "div");
+
+					//小于最小金额
+					if(value <= MIN_VALUE)
+						return mui.alert("充值不得小于" + MIN_VALUE + "元", "错误", null, null, "div");
+
+					var flag = false;
+					plus.payment.getChannels(function(channel) {
+						channel.forEach(function(e) {
+							if(e.id == "wxpay" && e.serviceReady) {
+								flag = true;
+							}
+						});
+						if(flag)
+							startOrder(value);
+						else {
+							alert("很遗憾，您的手机尚未安装微信或微信支付模块未打开！");
+						}
+					}, function(e) {
+						alert(e.message);
+					})
+
+				}
+
+				function startOrder(value) {
+					app.request("Money", "createOrder", {
+						"money": value
+					}, function(res) {
+						if(res.login == 0) {
+							mui.toast(res.info);
+							return app.toLogin();
+						}
+						if(res.status == 1) {
+
+						} else {
+							mui.toast(res.info);
+						}
+					}, function(xhr) {
+
+					});
+				}
+
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

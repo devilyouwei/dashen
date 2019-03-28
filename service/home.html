@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html id="error">
+	<!--
+    	作者：devilyouwei@gmail.com
+    	时间：2017-08-07
+    	描述：附近的用户的个人主页，先罗列用户的需求，瀑布流加载
+    -->
+
+	<head>
+		<meta charset="utf-8">
+		<title>个人主页</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/font-awesome.css">
+		<style>
+			@keyframes fade-in {
+				0% {
+					opacity: 0;
+				}
+				/*初始状态 透明度为0*/
+				40% {
+					opacity: 0;
+				}
+				/*过渡状态 透明度为0*/
+				100% {
+					opacity: 1;
+				}
+				/*结束状态 透明度为1*/
+			}
+			
+			@-webkit-keyframes fade-in {
+				/*针对webkit内核*/
+				0% {
+					opacity: 0;
+				}
+				40% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			.mui-media {
+				font-size: 14px;
+			}
+			
+			.mui-table-view .mui-media-object {
+				max-width: initial;
+				width: 90px;
+				height: 60px;
+			}
+			
+			.meta-info {
+				position: absolute;
+				left: 115px;
+				right: 15px;
+				bottom: 8px;
+				color: #8f8f94;
+			}
+			
+			.meta-info .author,
+			.meta-info .time {
+				display: inline-block;
+			}
+			
+			.meta-info .time {
+				float: right;
+			}
+			
+			.mui-table-view:before,
+			.mui-table-view:after {
+				height: 0;
+			}
+			
+			.mui-content>.mui-table-view:first-child {
+				margin-top: 1px;
+			}
+			
+			.banner {
+				height: 10em;
+				overflow: hidden;
+				position: relative;
+				background-position: center;
+				background-color: #0062CC;
+			}
+			
+			.banner .bg {
+				width: 100%;
+				height: auto;
+				display: none;
+				animation: fade-in;
+				/*动画名称*/
+				animation-duration: .5s;
+				/*动画持续时间*/
+				-webkit-animation: fade-in .5s;
+				/*针对webkit内核*/
+			}
+			
+			.banner .user_name {
+				position: absolute;
+				width: 100%;
+				bottom: 18%;
+				font-size: 100%;
+				font-weight: normal;
+				color: #fff;
+				z-index: 11;
+			}
+			
+			.banner .signature {
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				color: #CCCCCC;
+				z-index: 11;
+			}
+			
+			.banner .my_icon {
+				position: absolute;
+				bottom: 38%;
+				left: 50%;
+				margin-left: -2em;
+				border: solid 3px #2187E7;
+				border-radius: 10em;
+				width: 4em;
+				height: 4em;
+				z-index: 11;
+				display: none;
+				animation: fade-in;
+				/*动画名称*/
+				animation-duration: .5s;
+				/*动画持续时间*/
+				-webkit-animation: fade-in .5s;
+				/*针对webkit内核*/
+			}
+			
+			.icon-pencil {
+				font-size: 1em;
+			}
+			
+			#list ul li {
+				position: relative;
+			}
+			.price,.inorder,.success {
+				position: absolute;
+				padding: 1.2%;
+				border-radius: .5em;
+				top: .3em;
+				right: .6em;
+				font-weight: bold;
+				font-size: 1.1em;
+				color: #fff;
+				z-index:99;
+			}
+			.price{
+				background: #DD524D;
+			}
+			.inorder {
+				background: #C0C0C0;
+			}
+			.success {
+				background: #2AC845;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="content" class="mui-content">
+			<!--顶部个人背景以及头像等-->
+			<div class="banner">
+				<a href="javascript:;">
+					<img src="../images/homebg.jpg" id="bg" class="bg" />
+					<img class="my_icon" v-bind:src='user.my_icon' alt="" id="my_icon" onerror="this.src='../images/my_icon.jpg'" />
+					<h2 class="user_name mui-text-center">{{user.user_name}}</h2>
+					<p class="signature mui-text-center"><i class="mui-icon icon-pencil">&nbsp;</i>“{{user.signature}}”</p>
+				</a>
+			</div>
+
+			<div id="list">
+				<!--列表信息流 开始-->
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media" v-for="item in items">
+						<span class="price" v-if="item.state==0">￥{{item.price}}</span>
+						<span class="inorder" v-if="item.state==1">已被接单</span>
+						<span class="success" v-if="item.state==2">已完成</span>
+						<a href="#" v-bind:data-id="item.id" v-bind:data-title="item.title" class="detail">
+							<img class="mui-media-object mui-pull-left" v-bind:src="item.thumbnail" onerror="this.src='../images/no-img.png'">
+							<div class="mui-media-body">
+								<div class="mui-ellipsis-2">{{item.title}}</div>
+							</div>
+							<div class="meta-info">
+								<div class="author">{{item.reward}}</div>
+								<div class="time">{{item.create_time}}</div>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<!--列表信息流 结束-->
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script>
+			(function($, doc) {
+				//瀑布流最新的id
+				var MIN_ID = 0;
+				var vue = new Vue({
+					el: "#content",
+					data: {
+						user: {},
+						items: [] //列表信息流数据
+					}
+				});
+
+				$.init({
+					pullRefresh: {
+						container: '#list',
+						down: {
+							style: 'circle',
+							auto: true,
+							offset: '170px',
+							callback: initQues
+						},
+						up: {
+							contentrefresh: '加载中...',
+							callback: pullupRefresh
+						}
+					}
+				});
+
+				$.plusReady(function() {
+					app.log();
+					var _self = plus.webview.currentWebview();
+					var user = _self.user;
+					vue.user = user;
+					document.getElementById("bg").style.display = "block";
+					doc.getElementById("my_icon").style.display = "block";
+				});
+
+				/**
+				 * 1、将服务端返回数据，转换成前端需要的格式
+				 * 2、若服务端返回格式和前端所需格式相同，则不需要改功能
+				 * 
+				 * @param {Array} items 
+				 */
+				function convert(items) {
+					//已经加载到没有可加载数据，结束
+					if(items.length == 0) {
+						//mui.toast("已经全部加载完啦！");
+						//发现没有数据就关闭上拉加载更多
+						//mui('#list').pullRefresh().endPullup(true);
+						return items;
+					}
+					items.forEach(function(item) {
+						item.thumbnail = UPLOAD_URL + item.thumbnail;
+						item.create_time = dateUtils.format(item.create_time);
+						if(item.reward != "金钱悬赏")
+							item.price = 0;
+					});
+					MIN_ID = items[items.length - 1].id;
+					return items;
+				}
+
+				//下拉刷新方法
+				function initQues() {
+					//断网直接结束
+					if(window.plus && plus.networkinfo.getCurrentType() === plus.networkinfo.CONNECTION_NONE) {
+						plus.nativeUI.toast('似乎已断开与互联网的连接');
+						return;
+					}
+
+					//请求列表数据
+					app.request("Ques", "listQues", {
+						id: vue.user.id,
+						min_id: 0
+					}, function(res) {
+						mui('#list').pullRefresh().endPulldown();
+						playRefresh();
+						if(res.login == 0) {
+							plus.nativeUI.toast(res.info);
+							app.clearToken();
+							app.toLogin();
+						}
+						if(res.status == 1) {
+							//插入数据到vue中
+							vue.items = convert(res.data);
+						} else {
+							mui.toast(res.info); //显示错误信息
+						}
+					}, function(xhr) {
+						//doc.getElementById("error").innerHTML = xhr.response;
+						mui('#list').pullRefresh().endPulldown(); //结束下拉刷新
+					}, "none");
+				}
+
+				//上拉加载更多
+				function pullupRefresh() {
+					//请求列表数据
+					app.request("Ques", "listQues", {
+						id: vue.user.id,
+						min_id: MIN_ID
+					}, function(res) {
+						mui('#list').pullRefresh().endPullup();
+						if(res.login == 0) {
+							plus.nativeUI.toast(res.info);
+							app.clearToken();
+							app.toLogin();
+						}
+						if(res.status == 1) {
+							//插入数据到vue中
+							vue.items = vue.items.concat(convert(res.data));
+						} else {
+							mui.toast(res.info); //显示错误信息
+						}
+					}, function(xhr) {
+						mui('#list').pullRefresh().endPullup();
+					}, "none");
+				}
+
+				//绑定跳转事件，后期可以用vue的v-tap
+				$("#list").on("tap", ".detail", function() {
+					var id = this.getAttribute("data-id");
+					var title = this.getAttribute("data-title");
+					$.openWindow({
+						id: "ques/detail",
+						url: "/ques/detail.html",
+						styles: {
+							popGesture: "none",
+							render: "always",
+							titleNView: { //详情页原生导航配置
+								backgroundColor: '#3d80da', //导航栏背景色
+								titleText: title, //导航栏标题
+								titleColor: '#fff', //文字颜色
+								autoBackButton: true, //自动绘制返回箭头
+							}
+						},
+						show: {
+							aniShow: 'slide-in-right',
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							ques_id: id
+						}
+					})
+				});
+				
+			}(mui, document))
+		</script>
+	</body>
+
+</html>

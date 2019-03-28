@@ -1,0 +1,526 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>需求详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<link href="../css/font-awesome.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-content {
+				background: #fff;
+			}
+			
+			@keyframes load {
+				from {
+					background: #23CCFE;
+				}
+				to {
+					background: #23ABF0;
+				}
+			}
+			
+			@-webkit-keyframes load {
+				from {
+					background: #23CCFE;
+				}
+				to {
+					background: #23ABF0;
+				}
+			}
+			
+			.ani-load {
+				animation: load 1s ease 0s infinite alternate;
+				-webkit-animation: load 1s ease 0s infinite alternate;
+			}
+			
+			#content {
+				min-height: 20rem;
+				background: #23ABF0 url("../images/load.gif") center;
+			}
+			
+			.image {
+				width: 100%;
+				background: ;
+				height: auto;
+				margin: 1em 0;
+			}
+			
+			.image {
+				display: none;
+			}
+			/*-----------------------------------图片预览css效果-----------------------------------------*/
+			
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto 4;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			.icon-star {
+				color: #FFB400;
+			}
+			
+			#player {
+				background: #fff;
+				display: none;
+				border: solid 2px #ccc;
+				border-radius: 3px;
+			}
+			
+			.icobtn {
+				display: none;
+				width: 100%;
+			}
+			
+			#playerProgress {
+				padding-top: 5px;
+				margin: 10px 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">需求详情</h1>
+			<a id="show_order" class="mui-right mui-btn mui-btn-link mui-btn-nav mui-pull-right">
+			</a>
+		</header>
+		<div class="mui-content">
+			<article class="mui-article mui-padding-sm">
+				<div class="mui-article-hd">
+					<h3 class="mui-article-title ani-load" id="title">&nbsp;</h3>
+					<div class="mui-article-meta ani-load" id="update_time">&nbsp;</div>
+					<div class="mui-article-meta ani-load" id="star">&nbsp;</div>
+					<div class="mui-article-meta ani-load" id="reward">&nbsp;</div>
+				</div>
+				<br />
+				<div class="am-article-bd">
+					<div id="player" class="mui-padding-xs mui-row">
+						<div class="mui-col-xs-1">
+							<img class="icobtn" src="../images/start.ico" id="msg-play" />
+							<img class="icobtn" src="../images/stop-red.ico" id="msg-stop" />
+						</div>
+						<div class="mui-col-xs-11">
+							<div id="playerProgress" class="mui-progressbar">
+								<span></span>
+							</div>
+						</div>
+					</div>
+
+					<div id="content" class="mui-margin-top">
+
+					</div>
+					<div class="imgs">
+						<img src="" id="img0" class="image" data-preview-src="" data-preview-group="1" />
+						<img src="" id="img1" class="image" data-preview-src="" data-preview-group="1" />
+						<img src="" id="img2" class="image" data-preview-src="" data-preview-group="1" />
+						<img src="" id="img3" class="image" data-preview-src="" data-preview-group="1" />
+						<img src="" id="img4" class="image" data-preview-src="" data-preview-group="1" />
+						<img src="" id="img5" class="image" data-preview-src="" data-preview-group="1" />
+						<img src="" id="img6" class="image" data-preview-src="" data-preview-group="1" />
+						<img src="" id="img7" class="image" data-preview-src="" data-preview-group="1" />
+					</div>
+				</div>
+			</article>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/mui.zoom.js"></script>
+		<script src="../js/mui.previewimage.js"></script>
+		<script type="text/javascript">
+			(function($) {
+				$.init();
+
+				var qid = null;
+				$.plusReady(function() {
+					qid = mui.currentWebview.show_id;
+					app.log();
+
+					setTimeout(function() {
+						init_show(qid);
+					}, 300)
+				});
+
+				function init_show(id) {
+					if(!id)
+						$.back();
+
+					//请求获取问题的详细信息
+					app.request("User", "showQues", {
+						'id': id
+					}, function(res) {
+						if(res.login == 0)
+							return app.toLogin(res.info);
+						if(res.status == 0) {
+							mui.toast(res.info);
+							$.back();
+						} else {
+							bind_show_order(res.data.state);
+							//根据key为dom配对值
+							for(key in res.data) {
+								var dom = document.getElementById(key)
+								if(key == "update_time" || key == "create_time")
+									res.data[key] = "发布于：" + app.getLocalTime(res.data[key]); //格式化时间
+								if(key == "voice") {
+									download_voice(res.data[key]); //保存音频地址
+								}
+								//dom不为null，值不为空，则进行填充
+								if(dom && res.data[key]) {
+									dom.classList.remove("ani-load"); //停止动画
+									dom.style.background = "none"; //清除背景
+									switch(dom.tagName) {
+										case "IMG":
+											dom.src = UPLOAD_URL + res.data[key];
+											dom.style.display = "block";
+											break;
+										default:
+											if(dom.id == "star") {
+												dom.innerText = "难度等级：";
+												while(res.data[key]--) {
+													var i = document.createElement("I");
+													i.innerHTML = "&nbsp;"
+													i.setAttribute("class", "icon-star");
+													dom.appendChild(i);
+												}
+												break;
+											}
+											if(dom.id == "reward") {
+												switch(res.data['reward']) {
+													case "金钱悬赏":
+														dom.innerHTML = "悬赏：" + res.data['price'] + "元"
+														break;
+													case "志愿协助":
+														dom.innerHTML = "请求志愿协助：" + res.data['message'];
+														break;
+													case "请客吃饭":
+														dom.innerHTML = "请客吃饭：" + res.data['message'];
+														break;
+													case "赠送礼物":
+														dom.innerHTML = "赠送礼物";
+														break;
+												}
+												break;
+											}
+											dom.innerText = res.data[key];
+											break;
+									}
+								}
+								if(dom && !res.data[key])
+									dom.remove();
+							}
+							document.getElementById("content").style.minHeight = "auto";
+							$.previewImage()
+						}
+					}, function(xhr) {
+						mui.back();
+					}, "none");
+				}
+
+				var playerBox = document.getElementById("player");
+				var msgPlay = document.getElementById("msg-play");
+				var msgStop = document.getElementById("msg-stop");
+				var progress = mui("#playerProgress").progressbar(); //取得进度条
+				var proximity = null;
+				var timer = null; //计时监听器
+				var player = null; //播放器
+				var route = null;
+
+				//下载并初始化播放器
+				function download_voice(voice_url) {
+					var url = UPLOAD_URL + voice_url;
+					//下载语音文件
+					var dtask = plus.downloader.createDownload(url, {}, function(file, status) {
+						// 下载完成
+						if(status == 200) {
+							//显示语音播放条
+							playerBox.style.display = "block";
+							msgPlay.style.display = "block";
+							route = plus.audio.ROUTE_SPEAKER; //默认扬声器线;
+
+							msgPlay.addEventListener("tap", function() {
+
+								//先打开听筒距离监听器
+								proximity = plus.proximity.watchProximity(function(d) {
+									//距离小于3，但是用了扬声器
+									if(d <= 3 && route == plus.audio.ROUTE_SPEAKER) {
+										console.log("切换听筒");
+										stop(player);
+										route = plus.audio.ROUTE_EARPIECE; //置为短线陆，听筒
+										player = plus.audio.createPlayer(file.filename); //取得播放源
+										player.setRoute(route);
+										play(player);
+									}
+
+									//距离大于3，但是用了听筒
+									if(d > 3 && route == plus.audio.ROUTE_EARPIECE) {
+										console.log("切换扬声器");
+										stop(player);
+										route = plus.audio.ROUTE_SPEAKER
+										player = plus.audio.createPlayer(file.filename); //取得播放源
+										player.setRoute(route);
+										play(player);
+									}
+								}, function(e) {
+									mui.toast("听筒距离检测失败，请检查手机传感器硬件");
+								});
+								player = plus.audio.createPlayer(file.filename); //取得播放源
+								player.setRoute(route);
+								play(player);
+
+							}, false);
+
+							msgStop.addEventListener("tap", function() {
+								plus.proximity.clearWatch(proximity); //清空监听器
+								stop(player);
+							}, false);
+						} else {
+							mui.toast("语音文件下载失败！请检查网络，稍后重新打开尝试");
+						}
+					});
+					dtask.start();
+				}
+
+				//播放语音
+				function play(player) {
+					progress.setProgress(0); //每次触发播放按钮，重置进度条
+					msgPlay.style.display = "none"; //隐藏播放按钮
+					msgStop.style.display = "block"; //显示停止按钮
+					//400毫秒后开始加载进度
+					setTimeout(function() {
+						timer = setInterval(function() {
+							//加载完后结束监听
+							if(player.getDuration() == player.getPosition())
+								clearInterval(timer);
+							//100毫秒检测一次进度，加载进度条
+							progress.setProgress(player.getPosition() * 100 / player.getDuration());
+						}, 30);
+					}, 400);
+					player.play(function() {
+						//播放结束显示播放按钮，隐藏停止按钮
+						msgPlay.style.display = "block";
+						msgStop.style.display = "none";
+						progress.setProgress(100);
+						clearInterval(timer); //清空进度条监视器
+						plus.proximity.clearWatch(proximity);
+					}, function(e) {
+						mui.toast("播放失败！" + e.message);
+						msgPlay.style.display = "block";
+						msgStop.style.display = "none";
+						clearInterval(timer); //清空进度条监视器
+						plus.proximity.clearWatch(proximity); //清空监听器
+					});
+				}
+
+				//停止语音
+				function stop(player) {
+					player.stop();
+					progress.setProgress(0); //重置进度条
+					clearInterval(timer); //清除进度监听
+					msgPlay.style.display = "block";
+					msgStop.style.display = "none";
+				}
+
+				//显示订单状态
+				function bind_show_order(state) {
+					var show_order = document.getElementById("show_order");
+
+					if(state == 0) {
+						show_order.innerText = "等待接单";
+					} else {
+						show_order.innerText = "接单方";
+						show_order.addEventListener("tap", function() {
+							$.openWindow({
+								url: "showPicker.html",
+								id: "user/showPicker",
+								styles: {
+									titleNView: { //详情页原生导航配置
+										backgroundColor: '#3d80da', //导航栏背景色
+										titleText: '接单方', //导航栏标题
+										titleColor: '#fff', //文字颜色
+										type: 'transparent', //透明渐变样式
+										autoBackButton: true //自动绘制返回箭头
+									},
+									popGesture: "none",
+									render: 'always',
+								},
+								extras: {
+									ques_id: qid
+								}
+							});
+						});
+					}
+				}
+			}(mui))
+		</script>
+	</body>
+
+</html>

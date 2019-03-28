@@ -1,0 +1,667 @@
+<!doctype html>
+<html id="error">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>需求详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/style.css" rel="stylesheet" />
+		<link href="../css/font-awesome.css" rel="stylesheet" />
+		<style type="text/css">
+			body,
+			.mui-content {
+				background: #fff;
+			}
+			
+			.image {
+				width: 100%;
+				background: ;
+				height: auto;
+				margin: 1em 0;
+			}
+			
+			.image {
+				display: none;
+			}
+			/*-----------------------------------图片预览css效果-----------------------------------------*/
+			
+			.mui-preview-image.mui-fullscreen {
+				position: fixed;
+				z-index: 20;
+				background-color: #000;
+			}
+			
+			.mui-preview-header,
+			.mui-preview-footer {
+				position: absolute;
+				width: 100%;
+				left: 0;
+				z-index: 10;
+			}
+			
+			.mui-preview-header {
+				height: 44px;
+				top: 0;
+			}
+			
+			.mui-preview-footer {
+				height: 50px;
+				bottom: 0px;
+			}
+			
+			.mui-preview-header .mui-preview-indicator {
+				display: block;
+				line-height: 25px;
+				color: #fff;
+				text-align: center;
+				margin: 15px auto 4;
+				width: 70px;
+				background-color: rgba(0, 0, 0, 0.4);
+				border-radius: 12px;
+				font-size: 16px;
+			}
+			
+			.mui-preview-image {
+				display: none;
+				-webkit-animation-duration: 0.5s;
+				animation-duration: 0.5s;
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+			}
+			
+			.mui-preview-image.mui-preview-in {
+				-webkit-animation-name: fadeIn;
+				animation-name: fadeIn;
+			}
+			
+			.mui-preview-image.mui-preview-out {
+				background: none;
+				-webkit-animation-name: fadeOut;
+				animation-name: fadeOut;
+			}
+			
+			.mui-preview-image.mui-preview-out .mui-preview-header,
+			.mui-preview-image.mui-preview-out .mui-preview-footer {
+				display: none;
+			}
+			
+			.mui-zoom-scroller {
+				position: absolute;
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-box-align: center;
+				-webkit-align-items: center;
+				align-items: center;
+				-webkit-box-pack: center;
+				-webkit-justify-content: center;
+				justify-content: center;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				-webkit-backface-visibility: hidden;
+			}
+			
+			.mui-zoom {
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+			}
+			
+			.mui-slider .mui-slider-group .mui-slider-item img {
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider .mui-slider-group .mui-slider-item img {
+				width: 100%;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-slider-group .mui-slider-item {
+				display: inline-table;
+			}
+			
+			.mui-android-4-1 .mui-slider.mui-preview-image .mui-zoom-scroller img {
+				display: table-cell;
+				vertical-align: middle;
+			}
+			
+			.mui-preview-loading {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			
+			.mui-preview-loading.mui-active {
+				display: block;
+			}
+			
+			.mui-preview-loading .mui-spinner-white {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-left: -25px;
+				margin-top: -25px;
+				height: 50px;
+				width: 50px;
+			}
+			
+			.mui-preview-image img.mui-transitioning {
+				-webkit-transition: -webkit-transform 0.5s ease, opacity 0.5s ease;
+				transition: transform 0.5s ease, opacity 0.5s ease;
+			}
+			
+			@-webkit-keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@keyframes fadeIn {
+				0% {
+					opacity: 0;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+			
+			@-webkit-keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			@keyframes fadeOut {
+				0% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+				}
+			}
+			
+			.icon-star {
+				color: #FFB400;
+			}
+			
+			#player {
+				margin-top: 20px;
+				background: #fff;
+				display: none;
+				border: solid 2px #ccc;
+				border-radius: 3px;
+			}
+			
+			.icobtn {
+				display: none;
+				width: 100%;
+			}
+			
+			#playerProgress {
+				padding-top: 5px;
+				margin: 10px 0;
+			}
+			
+			#order,
+			#doing,
+			#done {
+				position: fixed;
+				display: none;
+				bottom: 0;
+				width: 100%;
+				margin-bottom: 0px;
+				border-radius: 0;
+			}
+			
+			#agreement {
+				color: red;
+				text-decoration: underline;
+			}
+			
+			#reward {
+				z-index: 9;
+				position: absolute;
+				top: 90px;
+				right: 0px;
+				display: none;
+				text-align: center;
+				font-size: 20px;
+				padding: 10px 20px;
+				background: #CF2D28;
+				color: #fff;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content" id="mui-content">
+			<article class="mui-article mui-padding-sm mui-margin-bottom-lg">
+				<div class="mui-article-hd">
+					<h3 class="mui-article-title mui-text-center">{{item.title}}</h3>
+					<div class="mui-article-meta mui-padding-top-xs">发布时间：{{item.update_time}}</div>
+					<div class="mui-article-meta mui-padding-top-xs">需求方：{{item.user_name}}</div>
+					<div class="mui-article-meta mui-padding-top-xs"><i class="mui-icon icon-star" v-for="n in item.star">&nbsp;</i></div>
+					<h2 id="reward">{{item.reward}}<br><span v-show="item.price">￥{{item.price}}</span></h2>
+					<div class="mui-article-meta mui-padding-top-xs" v-if="!item.message==''">留言：{{item.message}}</div>
+				</div>
+				<div class="am-article-bd">
+					<!--音频播放器-->
+					<div id="player" class="mui-padding-xs mui-row">
+						<div class="mui-col-xs-1">
+							<img class="icobtn" src="../images/start.ico" id="msg-play" />
+							<img class="icobtn" src="../images/stop-red.ico" id="msg-stop" />
+						</div>
+						<div class="mui-col-xs-11">
+							<div id="playerProgress" class="mui-progressbar">
+								<span></span>
+							</div>
+						</div>
+					</div>
+
+					<div id="content" class="mui-margin-top">
+						{{item.content}}
+					</div>
+					<div class="imgs">
+						<img v-bind:src="item.img0" id="img0" class="image" v-bind:data-preview-src="item.img0" data-preview-group="1" />
+						<img v-bind:src="item.img1" id="img1" class="image" v-bind:data-preview-src="item.img1" data-preview-group="1" />
+						<img v-bind:src="item.img2" id="img2" class="image" v-bind:data-preview-src="item.img2" data-preview-group="1" />
+						<img v-bind:src="item.img3" id="img3" class="image" v-bind:data-preview-src="item.img3" data-preview-group="1" />
+						<img v-bind:src="item.img4" id="img4" class="image" v-bind:data-preview-src="item.img4" data-preview-group="1" />
+						<img v-bind:src="item.img5" id="img5" class="image" v-bind:data-preview-src="item.img5" data-preview-group="1" />
+						<img v-bind:src="item.img6" id="img6" class="image" v-bind:data-preview-src="item.img6" data-preview-group="1" />
+						<img v-bind:src="item.img7" id="img7" class="image" v-bind:data-preview-src="item.img7" data-preview-group="1" />
+					</div>
+				</div>
+			</article>
+			<button id="order" v-bind:value="item.id" class="mui-btn mui-btn-block mui-btn-primary">立即接单</button>
+			<!--下面两个是无效按钮-->
+			<button id="doing" class="mui-btn mui-btn-block mui-btn-grey">已被接单</button>
+			<button id="done" class="mui-btn mui-btn-block mui-btn-success">已完成</button>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/app.js"></script>
+		<script src="../js/mui.zoom.js"></script>
+		<script src="../js/mui.previewimage.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script type="text/javascript">
+			(function($) {
+				var vue = new Vue({
+					el: ".mui-content",
+					data: {
+						item: {}
+					}
+				});
+
+				$.init();
+
+				var ques_id = null;
+				$.plusReady(function() {
+					app.log();
+					ques_id = mui.currentWebview.ques_id; //需求单id
+					setTimeout(function() {
+						init_show(ques_id);
+					}, 300);
+				});
+
+				//绘制头部分享按钮
+				function init_share() {
+					//绘制分享按钮
+					var nav = plus.webview.currentWebview().getNavigationbar();
+					var shares = [];
+					nav.drawText('分享', {
+						bottom: '10px',
+						right: '10px',
+						width: '30px',
+						height: '24px'
+					}, {
+						align: 'center',
+						color: '#fff'
+					});
+
+					//获取分享列表
+					plus.share.getServices(function(s) {
+						for(var i in s) {
+							var t = s[i];
+							shares[t.id] = t;
+						}
+					}, function(e) {
+						mui.toast('获取分享服务列表失败：' + e.message);
+					});
+
+					//监听按钮
+					nav.addEventListener("click", function(e) {
+						var x = e.clientX;
+						if(x > window.innerWidth - 40) {
+							//弹出分享弹窗
+							shareHref(shares);
+						}
+					});
+				}
+
+				// 分析链接
+				function shareHref(shares) {
+					var shareBts = [];
+					// 更新分享列表
+					var ss = shares['weixin'];
+					ss && ss.nativeClient && (shareBts.push({
+							title: '微信朋友圈',
+							s: ss,
+							x: 'WXSceneTimeline'
+						}),
+						shareBts.push({
+							title: '微信好友',
+							s: ss,
+							x: 'WXSceneSession'
+						}));
+					ss = shares['qq'];
+					ss && ss.nativeClient && shareBts.push({
+						title: 'QQ',
+						s: ss
+					});
+					// 弹出分享列表
+					shareBts.length > 0 ? plus.nativeUI.actionSheet({
+						title: '分享',
+						cancel: '取消',
+						buttons: shareBts
+					}, function(e) {
+						(e.index > 0) && shareAction(shareBts[e.index - 1], true);
+					}) : mui.alert('当前环境无法支持分享链接操作!');
+				}
+
+				function shareAction(sb, bh) {
+					if(!sb || !sb.s) {
+						mui.toast('无效的分享服务！');
+						return;
+					}
+					var msg = {
+						content: "测试分享",
+						extra: {
+							scene: sb.x
+						}
+					};
+					if(bh) {
+						msg.href = SHARE_URL+"/qid/"+vue.item.id+"/sid/"+app.getUserInfo().id;
+						msg.title = "呀哦服务-"+vue.item.title;
+						msg.content = "我在呀看到此单，分享给你，悬赏："+vue.item.price+"元";
+						msg.thumbs = ['../images/icon.png'];
+						msg.pictures = ['../images/icon.png'];
+					}
+					// 发送分享
+					if(sb.s.authenticated) {
+						console.log('---已授权---');
+						shareMessage(msg, sb.s);
+					} else {
+						console.log('---未授权---');
+						sb.s.authorize(function() {
+							shareMessage(msg, sb.s);
+						}, function(e) {
+							mui.toast('认证授权失败：' + e.code + ' - ' + e.message);
+						});
+					}
+				}
+
+				function shareMessage(msg, s) {
+					console.log(JSON.stringify(msg));
+					s.send(msg, function() {
+						mui.toast('分享到"' + s.description + '"成功！');
+					}, function(e) {
+						mui.toast("未分享！");
+					});
+				}
+
+				function init_show(id) {
+					if(!id)
+						$.back();
+
+					//请求获取问题的详细信息
+					app.request("Ques", "detail", {
+						'id': id
+					}, function(res) {
+						if(res.login == 0) {
+							mui.toast(res.info)
+							return app.toLogin(res.info);
+						}
+						if(res.status == 0) {
+							mui.toast(res.info);
+							$.back();
+						} else {
+							vue.item = convert(res.data);
+							if(res.data.voice != "")
+								download_voice(res.data.voice); //下载语音
+							//非自己的单子才显示各种操作按钮
+							if(res.data.uid != app.getUserInfo().id) {
+								if(res.data.state == 0) {
+									document.getElementById("order").style.display = "block"
+									document.getElementById("order").addEventListener("tap", getOrder, false);
+									init_share(); //如果尚未接单启动分享功能
+								} else if(res.data.state == 1) {
+									//显示已被接单
+									document.getElementById("doing").style.display = "block";
+								} else if(res.data.state == 2) {
+									//显示已经完成
+									document.getElementById("done").style.display = "block";
+								}
+							}
+							$.previewImage();
+						}
+					}, {}, "none");
+				}
+
+				function convert(item) {
+					document.getElementById("content").style.background = "#fff";
+					document.getElementById("reward").style.display = "block";
+					item.create_time = dateUtils.format(item.create_time);
+					item.update_time = dateUtils.format(item.update_time);
+					item.star = parseInt(item.star);
+					for(var i = 0; i < 8; i++) {
+						if(item['img' + i] != "") {
+							item['img' + i] = UPLOAD_URL + item['img' + i];
+							document.getElementById("img" + i).style.display = "block";
+						}else{
+							document.getElementById("img" + i).remove();
+						}
+					}
+					return item;
+				}
+
+				var playerBox = document.getElementById("player");
+				var msgPlay = document.getElementById("msg-play");
+				var msgStop = document.getElementById("msg-stop");
+				var progress = mui("#playerProgress").progressbar(); //取得进度条
+				var proximity = null;
+				var timer = null; //计时监听器
+				var player = null; //播放器
+				var route = null;
+
+				//下载并初始化播放器
+				function download_voice(voice_url) {
+					if(!voice_url || voice_url == "")
+						return;
+					//下载语音文件
+					var dtask = plus.downloader.createDownload(UPLOAD_URL + voice_url, {}, function(file, status) {
+						// 下载完成
+						if(status == 200) {
+							//显示语音播放条
+							playerBox.style.display = "block";
+							msgPlay.style.display = "block";
+							route = plus.audio.ROUTE_SPEAKER; //默认扬声器线;
+
+							msgPlay.addEventListener("tap", function() {
+
+								//先打开听筒距离监听器
+								proximity = plus.proximity.watchProximity(function(d) {
+									//距离小于3，但是用了扬声器
+									if(d <= 3 && route == plus.audio.ROUTE_SPEAKER) {
+										console.log("切换听筒");
+										stop(player);
+										route = plus.audio.ROUTE_EARPIECE; //置为短线陆，听筒
+										player = plus.audio.createPlayer(file.filename); //取得播放源
+										player.setRoute(route);
+										play(player);
+									}
+
+									//距离大于3，但是用了听筒
+									if(d > 3 && route == plus.audio.ROUTE_EARPIECE) {
+										console.log("切换扬声器");
+										stop(player);
+										route = plus.audio.ROUTE_SPEAKER
+										player = plus.audio.createPlayer(file.filename); //取得播放源
+										player.setRoute(route);
+										play(player);
+									}
+								}, function(e) {
+									mui.toast("听筒距离检测失败，请检查手机传感器硬件");
+								});
+								player = plus.audio.createPlayer(file.filename); //取得播放源
+								player.setRoute(route);
+								play(player);
+
+							}, false);
+
+							msgStop.addEventListener("tap", function() {
+								plus.proximity.clearWatch(proximity); //清空监听器
+								stop(player);
+							}, false);
+						} else {
+							mui.toast("语音文件下载失败！请检查网络，稍后重新打开尝试");
+						}
+					});
+					dtask.start();
+				}
+
+				//播放语音
+				function play(player) {
+					progress.setProgress(0); //每次触发播放按钮，重置进度条
+					msgPlay.style.display = "none"; //隐藏播放按钮
+					msgStop.style.display = "block"; //显示停止按钮
+					//400毫秒后开始加载进度
+					setTimeout(function() {
+						timer = setInterval(function() {
+							//加载完后结束监听
+							if(player.getDuration() == player.getPosition())
+								clearInterval(timer);
+							//100毫秒检测一次进度，加载进度条
+							progress.setProgress(player.getPosition() * 100 / player.getDuration());
+						}, 30);
+					}, 400);
+					player.play(function() {
+						//播放结束显示播放按钮，隐藏停止按钮
+						msgPlay.style.display = "block";
+						msgStop.style.display = "none";
+						progress.setProgress(100);
+						clearInterval(timer); //清空进度条监视器
+						plus.proximity.clearWatch(proximity);
+					}, function(e) {
+						mui.toast("播放失败！" + e.message);
+						msgPlay.style.display = "block";
+						msgStop.style.display = "none";
+						clearInterval(timer); //清空进度条监视器
+						plus.proximity.clearWatch(proximity); //清空监听器
+					});
+				}
+
+				//停止语音
+				function stop(player) {
+					player.stop();
+					progress.setProgress(0); //重置进度条
+					clearInterval(timer); //清除进度监听
+					msgPlay.style.display = "block";
+					msgStop.style.display = "none";
+				}
+
+				//接单
+				function getOrder() {
+					var id = this.value;
+					$.confirm("确认接单吗？</br></br><span id='agreement'>查看接单须知和协议</span>", "接单确认", ["暂且不接", "是，我要接"], function(e) {
+						if(e.index == 1) {
+							app.request("QuesOrder", "addOrder", {
+								id: id
+							}, function(res) {
+								if(res.login == 0) {
+									mui.toast(res.info);
+									return app.toLogin(res.info);
+								}
+								if(res.status == 1) {
+									mui.toast(res.info);
+									document.getElementById("doing").style.display = "block";
+									document.getElementById("order").style.display = "none";
+									mui.confirm("已经接单成功，是否要跳转到我的接单，查看接单详情？", "接单成功", ["留在此处", "是，去我的接单"], function(e) {
+										if(e.index == 1) {
+											toMyOrder();
+										} else {
+											return;
+										}
+									}, "div");
+								} else {
+									mui.toast(res.info);
+									mui.back();
+								}
+							}, function(xhr) {
+								//document.getElementById("error").innerHTML = xhr.response;
+							});
+						} else {
+							mui.toast("您取消了接单！");
+							return;
+						}
+					}, "div");
+				}
+
+				//跳转到我的订单页面
+				function toMyOrder() {
+					$.openWindow({
+						url: "../user/myOrder.html",
+						id: "user/mOrder",
+						styles: {
+							autoShow: true,
+							aniShow: "slide-in-right",
+							duration: 300,
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+				}
+
+				$("body").on("tap", "#agreement", function() {
+					$.openWindow({
+						url: "agreement.html",
+						id: "ques/agreement",
+						styles: {
+							autoShow: true,
+							aniShow: "slide-in-right",
+							duration: 300,
+							titleNView: {
+								'backgroundColor': '#D74B28',
+								'titleText': '接单须知',
+								'titleColor': '#fff',
+								autoBackButton: true
+							},
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+				})
+
+			}(mui))
+		</script>
+	</body>
+
+</html>

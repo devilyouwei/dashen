@@ -1,0 +1,1169 @@
+<!doctype html>
+<html id="error">
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>发起需求单</title>
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/style.css" />
+		<link rel="stylesheet" type="text/css" href="../css/font-awesome.css" />
+		<style type="text/css">
+			body {
+				background-color: #EFEFF4;
+			}
+			
+			input,
+			textarea {
+				border: none !important;
+			}
+			
+			textarea {
+				height: 100px;
+				margin-bottom: 0 !important;
+				padding-bottom: 0 !important;
+			}
+			
+			.row {
+				width: 100%;
+				background-color: #fff;
+			}
+			
+			p {
+				padding: 10px 15px 0;
+			}
+			
+			input::-webkit-input-placeholder,
+			textarea::-webkit-input-placeholder {
+				font-size: 14px;
+			}
+			
+			.image-list {
+				padding-top: 10px;
+				padding-bottom: 5px;
+			}
+			
+			.image-item {
+				width: 70px;
+				height: 70px;
+				background-image: url('../images/iconfont-tianjia.png');
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: 100% 100%;
+				display: inline-block;
+				position: relative;
+				border-radius: 5px;
+				margin-left: 8px;
+				border: solid 1px #e8e8e8;
+			}
+			
+			.image-item.space {
+				border: none;
+			}
+			
+			.image-item .image-close {
+				position: absolute;
+				display: inline-block;
+				right: -6px;
+				top: -6px;
+				width: 20px;
+				height: 20px;
+				text-align: center;
+				line-height: 20px;
+				border-radius: 12px;
+				background-color: #FF5053;
+				color: #f3f3f3;
+				border: solid 1px #FF5053;
+				font-size: 9px;
+				font-weight: 200;
+				z-index: 1;
+			}
+			
+			.image-item.space .image-close {
+				display: none;
+			}
+			
+			.mui-inline {
+				vertical-align: bottom;
+				font-size: 14px;
+				color: #8f8f94;
+			}
+			
+			.mui-icon-star {
+				color: #B5B5B5;
+				font-size: 22px;
+			}
+			
+			.mui-icon-star-filled {
+				color: #FFB400;
+				font-size: 22px;
+			}
+			
+			#popover {
+				height: 180px;
+			}
+			
+			.stream {
+				display: none;
+			}
+			
+			.mui-plus-stream .stream {
+				display: block;
+			}
+			
+			#message,
+			#upload_box,
+			#price_box {
+				height: 2.6em;
+			}
+			
+			#price_box {
+				display: block;
+				margin: 0 auto;
+			}
+			
+			#message {
+				display: none;
+			}
+			
+			#upload_box {
+				line-height: 2.6em;
+				text-align: center;
+				display: none;
+				background: #fff;
+			}
+			
+			#gift_img {
+				margin-top: 1em;
+				padding: 1em 1em 1em 1em;
+				background: #fff;
+				display: none;
+				width: 100%;
+			}
+			
+			#msg-sound {
+				-webkit-user-select: none !important;
+				user-select: none !important;
+			}
+			
+			.rprogress {
+				position: absolute;
+				left: 50%;
+				top: 20%;
+				width: 140px;
+				height: 140px;
+				margin-left: -70px;
+				margin-top: -70px;
+				background-image: url(../images/microphone-icon.png);
+				background-repeat: no-repeat;
+				background-position: center center;
+				background-size: 30px 30px;
+				background-color: rgba(0, 0, 0, 0.7);
+				border-radius: 5px;
+				-webkit-transition: .15s;
+				display: none;
+			}
+			
+			.rschedule {
+				background-color: rgba(0, 0, 0, 0);
+				border: 5px solid rgba(0, 183, 229, 0.9);
+				opacity: .9;
+				border-left: 5px solid rgba(0, 0, 0, 0);
+				border-right: 5px solid rgba(0, 0, 0, 0);
+				border-radius: 50px;
+				box-shadow: 0 0 15px #2187e7;
+				width: 46px;
+				height: 46px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin-left: -23px;
+				margin-top: -23px;
+				-webkit-animation: spin 1s infinite linear;
+				animation: spin 1s infinite linear;
+			}
+			
+			.r-sigh {
+				display: none;
+				border-radius: 50px;
+				box-shadow: 0 0 15px #2187e7;
+				width: 46px;
+				height: 46px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				margin-left: -23px;
+				margin-top: -23px;
+				text-align: center;
+				line-height: 46px;
+				font-size: 40px;
+				font-weight: bold;
+				color: #2187e7;
+			}
+			
+			.rprogress-sigh {
+				background-image: none !important;
+			}
+			
+			.rprogress-sigh .rschedule {
+				display: none !important;
+			}
+			
+			.rprogress-sigh .r-sigh {
+				display: block !important;
+			}
+			
+			.rsalert {
+				font-size: 12px;
+				color: #bbb;
+				text-align: center;
+				position: absolute;
+				border-radius: 5px;
+				width: 130px;
+				margin: 5px 5px;
+				padding: 5px;
+				left: 0px;
+				bottom: 0px;
+			}
+			
+			@-webkit-keyframes spin {
+				0% {
+					-webkit-transform: rotate(0deg);
+				}
+				100% {
+					-webkit-transform: rotate(360deg);
+				}
+			}
+			
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+			
+			#player {
+				background: #fff;
+				display: none;
+			}
+			
+			.icobtn {
+				display: none;
+				width: 100%;
+			}
+			
+			#playerProgress {
+				padding-top: 5px;
+				margin: 10px 0;
+			}
+			
+			#titlePopover {
+				width: 16em;
+				height: 280px;
+				left: 50%;
+				margin-left: -8em;
+			}
+			
+			#titlePopover .mui-popover-arrow {
+				left: 40%;
+			}
+			
+			#upload_progress {
+				top: 0;
+				position: fixed;
+				z-index: 999;
+				display: none;
+			}
+			
+			.mui-progressbar-success span {
+				background-color: #4cd964;
+			}
+			#my_money{
+				color:#2AC845;
+				font-size:14px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">发起需求</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-progressbar mui-progressbar-success mui-padding-top-xs" id="upload_progress">
+				<span></span>
+			</div>
+			<div class="mui-margin-vertical-sm">
+				<div class="mui-inline mui-padding-horizontal-xs">主题</div>
+				<div class="mui-input-row">
+					<input id='title' name="title" type="text" placeholder="点击选择主题" readonly="readonly" />
+				</div>
+				<div id="titlePopover" class="mui-popover">
+					<div class="mui-popover-arrow"></div>
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="mui-table-view">
+								<li class="mui-table-view-cell" v-for="item in title">
+									<a href="#" v-bind:data-title="item.id">{{item.title}}</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="mui-margin-vertical-sm">
+				<div class="mui-inline mui-padding-horizontal-xs">内容</div>
+				<a class="mui-pull-right mui-inline" href="#popover">
+					快捷输入
+					<span class="mui-icon mui-icon-arrowdown"></span>
+				</a>
+				<!--快捷输入具体内容，开发者可自己替换常用语-->
+				<div id="popover" class="mui-popover">
+					<div class="mui-popover-arrow"></div>
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="mui-table-view">
+								<!--仅流应用环境下显示-->
+								<li class="mui-table-view-cell stream">
+									<a href="#">桌面快捷方式创建失败</a>
+								</li>
+								<li class="mui-table-view-cell">
+									<a href="#">界面显示错乱</a>
+								</li>
+								<li class="mui-table-view-cell">
+									<a href="#">启动缓慢，卡出翔了</a>
+								</li>
+								<li class="mui-table-view-cell">
+									<a href="#">偶发性崩溃</a>
+								</li>
+								<li class="mui-table-view-cell">
+									<a href="#">UI无法直视，丑哭了</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="row mui-input-row">
+					<textarea id='content' name="content" class="mui-input-clear content" placeholder="请详细描述你的需求"></textarea>
+				</div>
+			</div>
+
+			<div id='sound-alert' class="rprogress">
+				<div class="rschedule"></div>
+				<div class="r-sigh">!</div>
+				<div id="audio_tips" class="rsalert">松开结束录音</div>
+			</div>
+
+			<div class="mui-margin-top-xs mui-padding-horizontal-sm">
+				<button id='msg-sound' class='mui-btn mui-btn-warning mui-btn-block mui-btn-mini mui-padding-vertical-xs'><i class="mui-icon mui-icon-mic-filled">&nbsp</i>按住说话</button>
+				<div id="player" class="mui-padding-xs mui-row">
+					<div class="mui-col-xs-1">
+						<img class="icobtn" src="../images/start.ico" id="msg-play" />
+						<img class="icobtn" src="../images/stop-red.ico" id="msg-stop" />
+					</div>
+					<div class="mui-col-xs-11">
+						<div id="playerProgress" class="mui-progressbar">
+							<span></span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="mui-margin-vertical-sm">
+				<div class="mui-inline mui-padding-horizontal-xs">图片(总大小10M以下，最多8张)</div>
+				<div id='image-list' class="row image-list"></div>
+			</div>
+
+			<ul class="mui-margin-vertical-sm mui-table-view">
+				<li class="mui-table-view-cell">
+					<span>上传原图（注：加长上传时间）</span>
+					<div class="mui-switch mui-switch-blue" id="high_img">
+						<div class="mui-switch-handle"></div>
+					</div>
+				</li>
+			</ul>
+
+			<div class="mui-margin-vertical-sm">
+				<div class="mui-inline mui-padding-horizontal-xs">难度等级</div>
+				<div class="mui-margin-horizontal-xs">
+					<div class="icons mui-inline">
+						<i data-index="1" class="mui-icon mui-icon-star"></i>
+						<i data-index="2" class="mui-icon mui-icon-star"></i>
+						<i data-index="3" class="mui-icon mui-icon-star"></i>
+						<i data-index="4" class="mui-icon mui-icon-star"></i>
+						<i data-index="5" class="mui-icon mui-icon-star"></i>
+					</div>
+				</div>
+			</div>
+
+			<div class="mui-margin-vertical-sm">
+				<div class="mui-input-group">
+					<div class="mui-input-row mui-plus-visible">
+						<input id="loc" type="text" class="mui-input-speech mui-input-clear" placeholder="点击右侧语音标志，语音识别输入">
+					</div>
+					<div class="mui-button-row">
+						<button id="getLoc" data-loading-text="获取定位中" class="mui-btn mui-btn-primary"><i class="mui-icon mui-icon-location-filled">&nbsp;</i>点击获取当前地址</button>
+					</div>
+				</div>
+			</div>
+			<div class="mui-margin-vertical-sm">
+				<div class="mui-inline mui-padding-horizontal-xs">悬赏方式</div>
+				<div class="mui-row">
+					<select class="mui-btn mui-btn-block mui-padding-horizontal-sm" name="reward" id="reward">
+						<option value="金钱悬赏" selected>金钱悬赏</option>
+						<!--
+						<option value="志愿协助">志愿协助</option>
+						<option value="请客吃饭">请客吃饭</option>
+						<option value="赠送礼物">赠送礼物</option>
+						-->
+					</select>
+					<h4 id="my_money" class="mui-text-center mui-margin-vertical-sm"></h4>
+					<input type="text" name="message" id="message" placeholder="留言" />
+					<div id="price_box" class="mui-numbox" data-numbox-step='100' data-numbox-min='0' style="width: 220px;height: 50px;">
+						<button class="mui-btn mui-numbox-btn-minus" type="button">-</button>
+						<input id="price" class="mui-numbox-input" type="number" />
+						<button class="mui-btn mui-numbox-btn-plus" type="button">+</button>
+					</div>
+					<div id="upload_box">
+						<a id="upload">上传物品照</a>
+					</div>
+					<img src="" alt="" id="gift_img" />
+				</div>
+			</div>
+
+			<div class="mui-margin-vertical mui-padding-horizontal">
+				<div class="mui-row">
+					<button class="mui-btn mui-btn-block mui-btn-primary" id="submit"><i class="mui-icon icon-edit">&nbsp;</i>提交需求</button>
+				</div>
+			</div>
+
+			<script src="../js/mui.min.js"></script>
+			<script src="../js/app.js"></script>
+			<script src="../js/vue.min.js"></script>
+			<script type="text/javascript">
+				(function($, doc) {
+					//最多上传图片
+					var IMG_MAX_NUM = 8;
+					//录音最短时间
+					var MIN_SOUND_TIME = 800;
+					//最大上传字节
+					var MAX_UPLOAD_SIZE = 1 * 1024;
+					$.init({
+						gestureConfig: {
+							tap: true, //默认为true
+							doubletap: true, //默认为false
+							longtap: true, //默认为false
+							swipe: true, //默认为true
+							drag: true, //默认为true
+							hold: true, //默认为false，不监听
+							release: true //默认为false，不监听
+						}
+					});
+					var vue = new Vue({
+						el: '#titlePopover',
+						data: {
+							title: []
+						}
+					});
+
+					//question对象保存表单提交的数据包括图片文件
+					var question = {
+						title_id: '', //问题标题
+						content: '', //问题内容
+						star: 0, //问题难度
+						reward: '', //悬赏形式
+						message: '', //留言消息
+						price: 0, //悬赏金额
+						gift_img: '', //礼物图片文件
+						longitude: '',
+						latitude: '',
+						loc: '', //简略位置
+						poi: '', //标志建筑，地点
+						addr: '', //完整地址
+						files: [], //上传图片地址,数组
+						arecord: '', //语音录音
+						//添加图片
+						addFile: function(path) {
+							this.files.push(path);
+						},
+						//删除图片
+						removeFile: function(index) {
+							this.files.splice(index, 1); //删除图片数组元素
+						},
+						//替换图片
+						exFile: function(index, path) {
+							this.files.splice(index, 1, path);
+						}
+					};
+
+					mui.plusReady(function() {
+						app.log();
+						setTimeout(function() {
+							init_title();
+							init_money();
+						}, 300)
+						//document.getElementById("upload_box").style.display="block";
+						init_image_add(); //初始化图片添加器
+						init_record_mic();
+
+						//重写back，返回前询问用户
+						var oldBack = mui.back;
+						mui.back = function(e) {
+							mui.confirm("尚未提交，返回后将会丢失填写内容，是否返回？", "返回确认", ['返回', '取消'], function(e) {
+								if(e.index == 0)
+									oldBack();
+							})
+						}
+					});
+
+					document.getElementById("title").addEventListener("tap", function() {
+						mui("#titlePopover").popover("toggle");
+					}, false)
+					//选择主题
+					mui('#titlePopover').on('tap', 'li', function(e) {
+						document.getElementById("title").value = this.children[0].innerText;
+						question.title_id = this.children[0].getAttribute("data-title");
+						mui('#titlePopover').popover('hide')
+
+					})
+
+					//难度评分
+					mui('.icons').on('tap', 'i', function() {
+						var stars = parseInt(this.getAttribute("data-index"));
+						var parent = this.parentNode;
+						var children = parent.children;
+						if(this.classList.contains("mui-icon-star")) {
+							for(var i = 0; i < stars; i++) {
+								children[i].classList.remove('mui-icon-star');
+								children[i].classList.add('mui-icon-star-filled');
+							}
+						} else {
+							for(var i = stars; i < 5; i++) {
+								children[i].classList.add('mui-icon-star')
+								children[i].classList.remove('mui-icon-star-filled')
+							}
+						}
+						question.star = stars + ""; ///后面addData post数据时必须是字符串，不知道为什么。先转化为字符串
+					});
+
+					//选择快捷输入
+					mui('#popover').on('tap', 'li', function(e) {
+						document.getElementById("content").value = document.getElementById("content").value + this.children[0].innerHTML;
+						mui('#popover').popover('toggle')
+					})
+
+					document.getElementById("reward").addEventListener("change", function() {
+						var select_val = this.value;
+						var message = document.getElementById("message");
+						var price_box = document.getElementById("price_box");
+						var upload_box = document.getElementById("upload_box");
+						switch(select_val) {
+							case "金钱悬赏":
+								upload_box.style.display = "none";
+								message.style.display = "none";
+								price_box.style.display = "block";
+								break;
+							case "志愿协助":
+								upload_box.style.display = "none";
+								price_box.style.display = "none";
+								message.placeholder = "留言";
+								message.style.display = "block";
+								break;
+							case "请客吃饭":
+								upload_box.style.display = "none";
+								price_box.style.display = "none";
+								message.placeholder = "在哪吃？"
+								message.style.display = "block";
+								break;
+							case "赠送礼物":
+								message.style.display = "none";
+								price_box.style.display = "none";
+								upload_box.style.display = "block";
+								break;
+						}
+					});
+
+					//提交需求
+					document.getElementById("submit").addEventListener("tap", function() {
+						//获取表单数据
+						question.content = document.getElementById("content").value;
+						question.gift_img = document.getElementById("gift_img").getAttribute("src");
+						question.reward = document.getElementById("reward").value;
+						question.message = document.getElementById("message").value;
+						question.price = formatPrice(document.getElementById("price").value);
+						//转换金额失败
+						if(question.price === false) {
+							return mui.alert("<font color='red'>请输入正确的金额</font>", "格式错误", "好的", null, "div");
+						}
+						console.log(JSON.stringify(question));
+
+						/*
+						 * 必填项目：标题，内容，难度
+						 */
+						if(plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE)
+							return mui.toast("连接网络失败，请稍后再试");
+
+						if(trim(question.title_id) == "")
+							return mui.toast("请给出需求主题类型！");
+						if(trim(question.content) == "")
+							return mui.toast("无法提交，请填写需求描述内容！");
+						if(question.star <= 0 || question.star > 5)
+							return mui.toast("请给出需求等级难度！");
+
+						//确认支付
+						mui.confirm("该需求单将会消耗您" + question.price + "元，是否提交？", "确认提交并支付", ["否", "是"], function(e) {
+							if(e.index == 1) {
+								var money = formatPrice(app.getUserInfo()['money']);
+								if(money < question.price)
+									return mui.confirm("<font color='red'>抱歉，余额不足，无法发起！</font>", "无法发起需求", ['换个金额', '去充值'], function(e) {
+										if(e.index == 1) {
+											$.openWindow({
+												id: 'user/wallet',
+												url: '/user/wallet.html'
+											});
+										}
+									}, "div");
+								//用户未选择上传原图时，压缩所有上传图片
+								if(!document.getElementById("high_img").classList.contains("mui-active") && question.files.length > 0) {
+									submitQuesZipImg(question.files.length - 1);
+								} else {
+									submitQues();
+								}
+							} else {
+								return false;
+							}
+						})
+
+					}, false);
+
+					function init_title() {
+						app.request("Ques", "getQuesTitle", {}, function(res) {
+							if(res.login == 0) {
+								mui.toast(res.info);
+								return app.toLogin();
+							}
+							if(res.status == 1) {
+								vue.title = res.data;
+							} else {
+								mui.toast(res.info);
+								plus.webview.currentWebview().close();
+							}
+						}, function(xhr) {
+							//doc.getElementById("html").innerHTML = xhr.response;
+							plus.webview.currentWebview().close();
+						});
+					}
+
+					function init_money() {
+						app.request("Money", "getMoney", {}, function(res) {
+							if(res.login == 0) {
+								mui.toast(res.info);
+								return app.toLogin();
+							}
+							if(res.status == 1) {
+								//连上网络了才绑定充值按钮
+								var money = formatPrice(res.data);
+								doc.getElementById("my_money").innerText = "余额：" + money + "元";
+								//更新缓存money
+								var user_info = app.getUserInfo();
+								user_info.money = money;
+								app.setUserInfo(user_info);
+							} else {
+								mui.toast(res.info)
+							}
+						}, function(xhr) {
+							plus.webview.currentWebview().close();
+						}, "none");
+					}
+
+					//压缩图片并且上传表单数据
+					function submitQuesZipImg(len) {
+						//第一次
+						if(len == question.files.length - 1)
+							plus.nativeUI.showWaiting("正在压缩图片...", {
+								back: "none"
+							});
+
+						//当图片压缩完后，结束递归
+						if(!question.files[len]) {
+							plus.nativeUI.closeWaiting();
+							return submitQues();
+						}
+
+						var url = question.files[len];
+						plus.zip.compressImage({
+							src: url,
+							dst: '_doc/zip_' + url.substr(url.lastIndexOf('/') + 1),
+							overwrite: true,
+							quality: 50,
+							width: "60%",
+						}, function(zip) {
+							//压缩成功，替换原图路径
+							question.files[len] = zip.target;
+							submitQuesZipImg(--len);
+						}, function(e) {
+							//压缩失败
+							mui.toast('压缩失败！');
+							plus.nativeUI.closeWaiting();
+						});
+					}
+
+					//上传表单数据和文件
+					function submitQues() {
+						var timer = null;
+						var progress = mui("#upload_progress").progressbar();
+						//建立连接
+						var url = HTTP_DOMAIN + "Ques/addQues";
+						//新建上传任务
+						var uploader = plus.uploader.createUpload(url, {
+							method: 'POST'
+						}, function(upload, status) {
+							//注意：转交给addevent处理去了，但必须传入此函数作为createupload参数，否则产生错误
+						});
+
+						//内部函数：结束下载后的操作，上传成功，失败，还有中途停止都后都使用该函数
+						var afterUpload = function() {
+							plus.nativeUI.closeWaiting(); //关闭等待窗
+							clearInterval(timer); //关闭监听
+						}
+
+						//内部函数：开始下载后的操作
+						var doUpload = function(upload) {
+							//显示进度条
+							document.getElementById("upload_progress").style.display = "block";
+							//显示等待禁止返回按钮
+							plus.nativeUI.showWaiting("正在提交需求单，上传图片...", {
+								back: "none"
+							});
+							//启动进度条监听
+							timer = setInterval(function() {
+								/*
+								 * 文件过大，停止上传，无效
+								 * 黄有为 devilyouwei@gmail.com 2017-8-12
+								 * 由于html5+的upload对象存在不可取消上传的bug，故而暂时注释掉，以后可开启
+								if(upload.totalSize > MAX_UPLOAD_SIZE) {
+									mui.alert("文件上传过大，请关闭上传原图或删减！","上传超出","好的",null,"div");
+									upload.abort(); //停止上传
+									plus.uploader.clear(); //清楚上传任务
+									afterUpload();
+								}
+								*/
+								//进度条%
+								var percent = parseInt((upload.uploadedSize / upload.totalSize) * 100);
+								if(!isNaN(percent))
+									progress.setProgress(percent);
+							}, 100)
+						};
+
+						//添加上传数据
+						for(key in question) {
+							//去掉此三项为文件
+							if(key == "files" || key == "gift_img" || key == "arecord")
+								continue;
+							uploader.addData(key, question[key]);
+						}
+
+						//如果有礼物图片就上传
+						if(question.gift_img != "") {
+							uploader.addFile(question.gift_img, {
+								key: "gift_img"
+							});
+						}
+						//如果有语音就上传
+						if(question.arecord != "") {
+							uploader.addFile(question.arecord, {
+								key: "voice"
+							})
+						}
+
+						//添加八图上传
+						for(var i = 0; i < question.files.length; i++) {
+							uploader.addFile(question.files[i], {
+								key: "img" + i
+							});
+						}
+
+						//开始上传任务
+						uploader.start();
+						//监听上传状态
+						uploader.addEventListener("statechanged", function(upload, status) {
+							switch(upload.state) {
+								case 1: // 开始
+									doUpload(upload); //一定要有对应的afterUpload
+									break;
+								case 4:
+									//上传完成
+									afterUpload(); //结束上传中UI
+									progress.setProgress(100);
+
+									//上传成功200
+									if(status == 200) {
+										var res = JSON.parse(upload.responseText); //服务器返回数据转换为json解析
+										//服务器方登陆失效
+										if(res.login == 0) {
+											plus.nativeUI.toast(res.info);
+											app.toLogin();
+											return false;
+										}
+										if(res.status == 1) {
+											mui.alert("您的需求单已发布，等待附近的人抢单", "发表成功", "确定返回", function() {
+												plus.webview.currentWebview().close();
+												//刷新主页需求
+												mui.fire(plus.webview.getWebviewById("index"), "updateQues");
+											}, "div");
+										} else {
+											mui.alert(res.info);
+										}
+									} else {
+										mui.toast(status + "：上传失败！网络错误！请稍后重试");
+										//error.innerHTML = upload.responseText;
+										//上传失败，一般是由于网络、文件过大，格式问题
+										//mui.toast(res.info);
+									}
+									break;
+								default:
+									break;
+							}
+						});
+					}
+
+					//取得当前节点在平行兄弟节点的位置是第几个
+					function getChildrenIndex(ele) {
+						var i = 0;
+						while(ele = ele.previousElementSibling) {
+							i++;
+						}
+						return i;
+					}
+
+					document.getElementById("upload").addEventListener("tap", select_gift_img);
+					var imageList = document.getElementById('image-list');
+					//初始化图片添加器
+					function init_image_add() {
+						//上传图片上限,超过不现实加号
+						if(question.files.length >= IMG_MAX_NUM)
+							return;
+						var placeholder = document.createElement('div');
+						placeholder.setAttribute('class', 'image-item space');
+
+						//删除图片
+						var closeButton = document.createElement('div');
+						closeButton.setAttribute('class', 'image-close');
+						closeButton.innerHTML = 'X';
+						//小X的点击事件
+						closeButton.addEventListener('tap', function(event) {
+							question.removeFile(getChildrenIndex(placeholder)); //删除实际图片数组元素，先删除数组中的
+							imageList.removeChild(placeholder); //删除ui，必须后删除，否则节点会找不到了
+							if(question.files.length >= IMG_MAX_NUM - 1)
+								init_image_add();
+							event.stopPropagation();
+						}, false);
+
+						placeholder.addEventListener('tap', function(event) {
+							var btnArray = [{
+								title: "相册"
+							}, {
+								title: "拍照"
+							}];
+
+							//actionsheet
+							plus.nativeUI.actionSheet({
+								title: "选择图片",
+								cancel: "取消",
+								buttons: btnArray
+							}, function(e) {
+								var i = e.index;
+								switch(i) {
+									case 0:
+										break;
+									case 1:
+										plus.gallery.pick(function(e) {
+											plus.io.resolveLocalFileSystemURL(e, function(entry) {
+												var url = entry.toLocalURL();
+												var name = url.substr(e.lastIndexOf('/') + 1);
+
+												//压缩取得缩略图
+												plus.zip.compressImage({
+													src: url,
+													dst: '_doc/' + name,
+													overwrite: true,
+													quality: 50,
+													height: '300px',
+													clip: {
+														top: "25%",
+														left: "25%",
+														width: "300px",
+														height: "300px"
+													}
+												}, function(zip) {
+													placeholder.style.backgroundImage = "url('" + zip.target + "')";
+													if(!placeholder.classList.contains('space')) { //已有图片
+														question.exFile(getChildrenIndex(placeholder), url);
+													} else { //加号
+														placeholder.classList.remove('space');
+														question.addFile(url);
+														init_image_add();
+													}
+												}, function(zip) {
+													mui.toast('压缩失败！');
+												});
+
+											}, function(e) {
+												console.log("读取相册文件错误：" + e.message);
+											});
+
+										}, function(e) {
+											console.log(e.message);
+										}, {});
+										break;
+									case 2:
+										plus.camera.getCamera().captureImage(function(e) {
+											plus.io.resolveLocalFileSystemURL(e, function(entry) {
+												var url = entry.toLocalURL();
+												var name = url.substr(e.lastIndexOf('/') + 1);
+
+												//压缩
+												plus.zip.compressImage({
+													src: url,
+													dst: '_doc/' + name,
+													overwrite: true,
+													quality: 50,
+													height: '300px',
+													clip: {
+														top: "25%",
+														left: "25%",
+														width: "300px",
+														height: "300px"
+													}
+												}, function(zip) {
+													placeholder.style.backgroundImage = "url('" + zip.target + "')";
+													if(!placeholder.classList.contains('space')) { //已有图片
+														question.exFile(getChildrenIndex(placeholder), url);
+													} else { //加号
+														placeholder.classList.remove('space');
+														question.addFile(url);
+														init_image_add();
+													}
+												}, function(zip) {
+													mui.toast('压缩失败！');
+												});
+											}, function(e) {
+												console.log("读取拍照文件错误：" + e.message);
+											});
+										}, function(s) {
+											console.log("error" + s);
+										}, {});
+										break;
+								}
+							});
+
+						}, false);
+						/*
+						 * <div class="image-item space" id="img1">
+						 * 		<div class="image-close">x</div>
+						 * </div>
+						 */
+						placeholder.appendChild(closeButton);
+						imageList.appendChild(placeholder);
+					};
+
+					//选择礼物的示例图
+					function select_gift_img() {
+						var gift_img = document.getElementById("gift_img");
+						var btnArray = [{
+							title: "相册"
+						}, {
+							title: "拍照"
+						}];
+
+						//actionsheet
+						plus.nativeUI.actionSheet({
+							title: "选择图片",
+							cancel: "取消",
+							buttons: btnArray
+						}, function(e) {
+							var i = e.index;
+							switch(i) {
+								case 0:
+									break;
+								case 1:
+									plus.gallery.pick(function(e) {
+										plus.io.resolveLocalFileSystemURL(e, function(entry) {
+											var url = entry.toLocalURL();
+											gift_img.src = url;
+											gift_img.style.display = "block";
+										}, function(e) {
+											console.log("读取相册文件错误：" + e.message);
+										});
+									}, function(e) {
+										console.log(e.message);
+									}, {});
+									break;
+								case 2:
+									plus.camera.getCamera().captureImage(function(e) {
+										plus.io.resolveLocalFileSystemURL(e, function(entry) {
+											var url = entry.toLocalURL();
+											gift_img.src = url;
+											gift_img.style.display = "block";
+										}, function(e) {
+											console.log("读取拍照文件错误：" + e.message);
+										});
+									}, function(s) {
+										console.log("error" + s);
+									}, {});
+									break;
+							}
+						});
+
+					}
+
+					//初始化语音
+					function init_record_mic() {
+						var recorder = null;
+						var recordCancel = false;
+						var startTimestamp = null;
+						var stopTimestamp = null;
+						var stopTimer = null;
+						var msgSound = document.getElementById("msg-sound");
+						var soundAlert = document.getElementById("sound-alert");
+						var msgPlay = document.getElementById("msg-play");
+						var msgStop = document.getElementById("msg-stop");
+						var audio_tips = document.getElementById("audio_tips");
+						var playerBox = document.getElementById("player");
+						var player = null;
+						var setSoundAlertVisable = function(show) {
+							if(show) {
+								soundAlert.style.display = 'block';
+								soundAlert.style.opacity = 1;
+							} else {
+								soundAlert.style.opacity = 0;
+								//fadeOut 完成再真正隐藏
+								setTimeout(function() {
+									soundAlert.style.display = 'none';
+								}, 200);
+							}
+						};
+
+						//录音进行
+						msgSound.addEventListener('hold', function(event) {
+							if(stopTimer) clearTimeout(stopTimer);
+							recordCancel = false;
+							audio_tips.innerHTML = "松开结束录音";
+							soundAlert.classList.remove('rprogress-sigh');
+							setSoundAlertVisable(true);
+							recorder = plus.audio.getRecorder();
+							if(recorder == null) {
+								plus.nativeUI.toast("不能获取录音对象");
+								return;
+							}
+							startTimestamp = (new Date()).getTime();
+							recorder.record({
+								filename: "_doc/audio/"
+							}, function(path) {
+								//录音太短
+								if(recordCancel) return;
+								//显示播放器
+								playerBox.style.display = "block";
+								msgPlay.style.display = "block";
+
+								question.arecord = path; //获取语音地址
+							}, function(e) {
+								plus.nativeUI.toast("录音时出现异常: " + e.message);
+								//录音异常则清空
+								playerBox.style.display = "none";
+								question.arecord = "";
+							});
+						}, false);
+
+						//录音结束
+						msgSound.addEventListener('release', function(event) {
+							stopTimestamp = (new Date()).getTime();
+							if(stopTimestamp - startTimestamp < MIN_SOUND_TIME) {
+								audio_tips.innerHTML = "录音时间太短";
+								soundAlert.classList.add('rprogress-sigh');
+								recordCancel = true;
+								stopTimer = setTimeout(function() {
+									setSoundAlertVisable(false);
+								}, 800);
+							} else {
+								setSoundAlertVisable(false);
+							}
+							if(recorder)
+								recorder.stop();
+						}, false);
+
+						//语音播放
+						var progress = mui("#playerProgress").progressbar(); //取得进度条
+						var timer = null;
+						msgPlay.addEventListener("tap", function() {
+							player = plus.audio.createPlayer(question.arecord); //启动播放器
+							progress.setProgress(0); //每次触发播放按钮，重置进度条
+							//只有当前用户有录音时才播放
+							if(question.arecord && question.arecord != "") {
+								msgPlay.style.display = "none"; //隐藏播放按钮
+								msgStop.style.display = "block"; //显示停止按钮
+								//500毫秒后开始加载进度
+								setTimeout(function() {
+									timer = setInterval(function() {
+										//加载完后结束监听
+										if(player.getDuration() == player.getPosition())
+											clearInterval(timer);
+										//100毫秒检测一次进度，加载进度条
+										progress.setProgress(player.getPosition() * 100 / player.getDuration());
+									}, 30);
+								}, 400);
+								player.play(function() {
+									//播放结束显示播放按钮，隐藏停止按钮
+									msgPlay.style.display = "block";
+									msgStop.style.display = "none";
+									progress.setProgress(100);
+									clearInterval(timer);
+								}, function(e) {
+									mui.toast("播放失败！" + e.message);
+									msgPlay.style.display = "block";
+									msgStop.style.display = "none";
+									clearInterval(timer);
+								});
+							} else {
+								playerBox.style.display = "none";
+							}
+						});
+
+						//停止播放
+						msgStop.addEventListener("tap", function() {
+							player.stop();
+							progress.setProgress(0); //重置进度条
+							clearInterval(timer); //清除进度监听
+							msgPlay.style.display = "block";
+							msgStop.style.display = "none";
+						});
+					}
+
+					document.getElementById("getLoc").addEventListener("tap", function() {
+						var self = this;
+						mui(self).button('loading'); //按钮等待
+						plus.geolocation.getCurrentPosition(function(p) {
+							question.longitude = p.coords.longitude + ""; //前端强制转换为字符串，否则后端转换报错
+							question.latitude = p.coords.latitude + "";
+							question.addr = p.addresses
+							question.loc = p.address.district;// + p.address.street + p.address.streetNum + p.address.poiName;
+							question.poi = p.address.poiName;
+							//console.log(JSON.stringify(p));
+							document.getElementById("loc").value = question.loc;
+							mui(self).button('reset');
+						}, function(e) { //获取失败
+							mui.toast("位置获取失败：" + e.message);
+							mui(self).button('reset');
+						});
+					})
+
+				})(mui, document);
+			</script>
+	</body>
+
+</html>

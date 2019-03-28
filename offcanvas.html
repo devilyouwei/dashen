@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<link href="css/font-awesome.css" rel="stylesheet" />
+		<link href="css/icons-extra.css" rel="stylesheet" />
+		<style>
+			body {
+				background-size: cover;
+			}
+			
+			.mui-content {
+				background: none;
+			}
+			
+			.mui-table-view {
+				background: none;
+			}
+			
+			.mui-table-view .mui-table-view-cell {
+				color: #FAFAFA;
+				border: none;
+			}
+			
+			.mui-table-view.list-menu {
+				font-size: 110%;
+			}
+			
+			.mui-table-view-cell>a:not(.mui-btn).mui-active {
+				background: rgba(0, 0, 0, 0.1);
+			}
+			/*去除li该死的伪类线条*/
+			
+			.mui-table-view li.mui-table-view-cell:after {
+				content: none;
+			}
+			
+			.mui-table-view:before {
+				content: none;
+			}
+			
+			ul.mui-table-view:after {
+				content: none;
+			}
+			
+			#head_info {
+				padding-top: 2em;
+				height: 133px;
+				width: 100%;
+			}
+			
+			#headinfo .signature {
+				font-size: 0.9em;
+			}
+			
+			.mui-off-canvas-left #head_info.mui-table-view .mui-table-view-cell:first-child>a:not(.mui-btn).mui-active {
+				background: none;
+			}
+			
+			.mui-table-view#head_info .mui-media-object {
+				max-width: 3em;
+				max-height: 3em;
+				line-height: 3em;
+			}
+			
+			#head_info img.my_icon {
+				border-radius: 999em;
+				height: 3em;
+				width: 3em;
+			}
+			
+			.mui-table-view#head_info div.mui-media-body {
+				height: 3em;
+				line-height: 3em;
+			}
+			
+			.mui-table-view#head_info .mui-media-body span {
+				font-size: 1.6em;
+			}
+			
+			#head .user_name {
+				height: 3em;
+				line-height: 3em;
+				font-size: 1.1em;
+			}
+			
+			#head .my_icon {
+				height: 3.2em;
+			}
+			
+			header.mui-bar {
+				display: none;
+			}
+			
+			.mui-bar-nav~.mui-content {
+				padding: 0;
+			}
+			
+			.title {
+				margin: 35px 15px 10px;
+			}
+			
+			.title+.content {
+				margin: 10px 15px 35px;
+				color: #bbb;
+				text-indent: 1em;
+				font-size: 14px;
+				line-height: 24px;
+			}
+			
+			.mui-table-view {
+				margin-bottom: 35px;
+			}
+			
+			#list_menu li.mui-table-view-cell a {
+				display: block;
+			}
+			
+			#list_menu li.mui-table-view-cell a i {
+				display: inline-block;
+				width: 1.5em;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<!-- 菜单具体展示内容 -->
+			<ul class="mui-table-view mui-margin-vertical-lg" id="head_info">
+				<li class="mui-table-view-cell">
+					<a href="user/headinfo.html">
+						<img class="my_icon mui-media-object mui-pull-left" src="images/my_icon.jpg">
+						<div class="mui-media-body">
+							<span class="user_name">昵称</span>
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a href="user/headinfo.html" class="mui-padding-vertical-xs mui-padding-horizontal">
+						<span class="icon-pencil">&nbsp;</span>“&nbsp;<span class="signature">签名</span>&nbsp;”
+					</a>
+				</li>
+			</ul>
+
+			<ul class="mui-table-view list-menu mui-margin-vertical-xl" id="list_menu">
+				<li class="mui-table-view-cell mui-margin-top-sm">
+					<a class="mui-padding-left" href="user/personal.html">
+						<i class="mui-icon icon-user"></i><span>个人资料</span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-padding-left" href="service/ask.html">
+						<i class="mui-icon icon-plus"></i><span>发起需求</span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-padding-left" href="user/myQues.html">
+						<i class="mui-icon icon-file-text"></i><span>我的发单</span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-padding-left" href="user/myOrder.html">
+						<i class="mui-icon icon-check"></i><span>我的接单</span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-padding-left" href="user/wallet.html">
+						<i class="mui-icon icon-dollar"></i><span>我的钱包</span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-padding-left" href="user/security.html">
+						<i class="mui-icon icon-warning-sign"></i><span>安全配置</span>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a id="logout" class="mui-padding-left">
+						<i class="mui-icon icon-signout"></i><span>退出</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/app.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			//关闭back、menu按键监听，这样侧滑主界面会自动获得back和memu的按键事件，仅在主界面处理按键逻辑即可；
+			mui.init({
+				keyEventBind: {
+					backbutton: false,
+					menubutton: false
+				}
+			});
+			mui.plusReady(function() {
+				app.log();
+				//设置offcanvas背景
+				document.querySelector("body").style.backgroundImage = "url(images/offcanvas_bg.jpg)";
+
+				//获得主页面webview引用；
+				var _index = plus.webview.getWebviewById("index");
+				var _self = plus.webview.currentWebview();
+				_self.drag({
+					direction: "left",
+					moveMode: "followFinger"
+				}, {
+					view: _index,
+					moveMode: "follow"
+				}, function(e) {});
+			});
+			//关闭侧滑
+
+			//绑定列表除了退出外的所有按钮
+			mui('#list_menu,#head_info').on('tap', 'a:not(#logout)', function() {
+				//id去除html后缀
+				var id = this.getAttribute('href').replace('.html', '');
+				var href = this.href;
+
+				if(id && href) {
+					mui.openWindow({
+						url: href,
+						id: id,
+						styles: {
+							popGesture: "close",
+							render: 'always',
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+				}
+			}, false);
+
+			//绑定退出按钮
+			document.getElementById('logout').addEventListener('tap', function(event) {
+				var btnArray = ['否', '是'];
+				mui.confirm('确认退出登录？', '退出', btnArray, function(e) {
+					if(e.index == 1) {
+						app.request('User', 'logout', {}, function(res) {
+							if(res.status == 1) {
+								plus.nativeUI.toast(res.info);
+								app.clearToken();
+								app.toLogin();
+							} else {
+								mui.toast("抱歉，连接不到服务器，暂时无法退出，稍后再试试");
+							}
+						});
+					}
+				})
+			}, false);
+
+			window.addEventListener("updateHeadInfo", update_head_info); //添加自定义事件，其他页面调用;
+
+			//刷新头部信息
+			function update_head_info() {
+				var head_info = app.getUserInfo();
+				//更新用户名
+				mui.each(document.querySelectorAll(".user_name"), function(i, e) {
+					e.innerText = head_info.user_name || "未命名";
+				});
+				//更新头像
+				mui.each(document.querySelectorAll(".my_icon"), function(i, e) {
+					e.src = head_info.my_icon || "images/my_icon.jpg"; //offcanvas头像
+				});
+				//更新签名
+				document.querySelector(".signature").innerText = head_info.signature || "个人签名";
+			}
+		</script>
+	</body>
+
+</html>
