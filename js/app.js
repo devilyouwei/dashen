@@ -4,11 +4,14 @@
 
 //注意，最终要使用linux服务器，做路径不易出现访问错误
 IP = "dashen.devil.ren"
-HTTP_DOMAIN = "http://" + IP + "/index.php/app/";//app核心控制器服务器地址
-SHARE_URL = "http://"+IP+"";//分享地址
-UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/";//阿里oss服务器
+HTTP_DOMAIN = "http://" + IP + "/index.php/app/"; //app核心控制器服务器地址
+SHARE_URL = "http://" + IP + "/index.php/wap/Wx/share"; //分享地址
+UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/"; //阿里oss服务器
 
 (function($, owner) {
+	$(".mui-scroll-wrapper").scroll({
+		deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+	});
 	//使用全局进度条
 	//把通用的ajax请求打包起来
 	/*
@@ -30,6 +33,7 @@ UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/";//阿里oss服务�
 			return;
 		var url = HTTP_DOMAIN + ctl + "/" + act;
 		console.log(url);
+		console.log(JSON.stringify(dataObj));
 		mui.ajax(url, {
 			data: dataObj,
 			dataType: 'json',
@@ -105,6 +109,15 @@ UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/";//阿里oss服务�
 		owner.setState(state);
 	}
 
+	//保存登陆过的手机号
+	owner.saveLoginPhone = function(p) {
+		localStorage.setItem("$phone", p)
+	}
+	//获得登录手机号
+	owner.getLoginPhone = function() {
+		return localStorage.getItem("$phone");
+	}
+
 	//邮箱正则表达式匹配
 	owner.checkEmail = function(email) {
 		var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
@@ -115,7 +128,7 @@ UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/";//阿里oss服务�
 		return reg.test(qq);
 	}
 	owner.checkPhoneNumber = function(phone) {
-		var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/; 
+		var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
 		return reg.test(phone);
 	}
 
@@ -276,6 +289,7 @@ UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/";//阿里oss服务�
 		}
 		return false;
 	}
+
 }(mui, window.app = {}));
 
 function fullscreen() {
@@ -298,15 +312,15 @@ function trim(str) {
 }
 
 function playRefresh() {
-	plus.audio.createPlayer("/audio/3.wav").play(function() {}, function(e) {
+	plus.audio.createPlayer("/audio/2.wav").play(function() {}, function(e) {
 		//alert("Audio play failed:" + e.message);
 	});
 }
 
 //格式化价格
-function formatPrice(price){
-	price = parseFloat(price)//转换为浮点数
-	if(isNaN(price)){
+function formatPrice(price) {
+	price = parseFloat(price) //转换为浮点数
+	if(isNaN(price)) {
 		return false;
 	}
 	return price.toFixed(2);
@@ -314,6 +328,26 @@ function formatPrice(price){
 /**
  * 格式化时间的辅助类，将一个时间转换成x小时前、y天前等
  */
+Date.prototype.format = function(fmt) { 
+     var o = { 
+        "M+" : this.getMonth()+1,                 //月份 
+        "d+" : this.getDate(),                    //日 
+        "h+" : this.getHours(),                   //小时 
+        "m+" : this.getMinutes(),                 //分 
+        "s+" : this.getSeconds(),                 //秒 
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+        "S"  : this.getMilliseconds()             //毫秒 
+    }; 
+    if(/(y+)/.test(fmt)) {
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+    }
+     for(var k in o) {
+        if(new RegExp("("+ k +")").test(fmt)){
+             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+         }
+     }
+    return fmt; 
+}        
 var dateUtils = {
 	UNITS: {
 		'年': 31557600000,
@@ -341,6 +375,84 @@ var dateUtils = {
 		if(diff < this.UNITS['天']) {
 			return this.humanize(diff);
 		}
-		return date.toLocaleString().replace(/:\d{1,2}$/, ' ');
+		return date.format("yyyy-MM-dd hh:mm");
 	}
 };
+
+/*
+ * 更新用户位置的方法，注意：自己只能更新自己的，用session判断更新谁的
+ * 传入map：Point对象
+ * callback回掉函数
+ * ecallback错误回掉函数
+ */
+var updatePos = function(pos, callback, ecallback) {
+	var longitude = pos.longitude;
+	var latitude = pos.latitude;
+	//将位置发送到服务器
+	app.request('Service', 'updateUserPos', {
+		'longitude': longitude,
+		'latitude': latitude
+	}, function(res) {
+		//服务器方登陆失效
+		if(res.login == 0) {
+			mui.toast(res.info);
+			return app.toLogin(res.info);
+		}
+		if(callback && typeof callback == "function")
+			return callback();
+	}, function() {
+		if(ecallback && typeof ecallback == "function")
+			return ecallback();
+	}, "none");
+}
+
+//方法一扩展（C#中PadLeft、PadRight）
+String.prototype.PadLeft = function(len, charStr) {
+	var s = this + '';
+	return new Array(len - s.length + 1).join(charStr, '') + s;
+}
+String.prototype.PadRight = function(len, charStr) {
+	var s = this + '';
+	return s + new Array(len - s.length + 1).join(charStr, '');
+}
+
+//格式化订单编号
+function format_id(id) {
+	return id.toString().PadLeft(11, '0');
+}
+
+/*
+ * 使用map插件进行定位
+ * m：地图插件对象plus.Maps.map
+ * callback(plus.maps.point):成功回调
+ * ecallback(string):失败回调
+ */
+function mapGetPos(m, callback, ecallback) {
+	m.getUserLocation(function(state, pos) {
+		if(state == 0) {
+			if(callback && typeof callback == "function")
+				callback(pos);
+		} else {
+			if(ecallback && typeof ecallback == "function") {
+				var message = "获取当前位置失败，请检查GPS权限或地图模块";
+				ecallback(message);
+			}
+		}
+	});
+}
+
+//由gps模块获得定位,callback(plus.maps.Point)成功回调，ecallback(string)失败回调
+function geoGetPos(callback, ecallback) {
+	//geo模块获得position转换为map可用的point类型
+	plus.geolocation.getCurrentPosition(function(pos) {
+		var p = new plus.maps.Point(pos.coords.longitude, pos.coords.latitude);
+		if(callback && typeof callback == "function")
+			callback(p);
+	}, function(e) {
+		if(ecallback && typeof ecallback == "function")
+			ecallback(e.message);
+	}, {
+		enableHighAccuracy: true,
+		provider: "baidu"
+	});
+}

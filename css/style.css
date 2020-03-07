@@ -1,11 +1,15 @@
-.mui-bar{
-	padding-top:23px;
-	height:66px;
+.mui-bar {
+	padding-top: 23px;
+	height: 66px;
 }
+
 .mui-bar-nav~.mui-content {
 	padding-top: 66px;
 }
+
+
 /* Margin helpers */
+
 .mui-margin {
 	margin: 1.6rem!important;
 }
@@ -373,6 +377,11 @@
 /* ==========================================================================
    Component: Article
  ============================================================================ */
+
+.mui-article {
+	width: 100%;
+	word-break: break-all;
+}
 
 .mui-article:before,
 .mui-article:after {

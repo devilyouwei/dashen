@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>众帮登录</title>
+		<title>大神</title>
 		<link href="css/mui.min.css" rel="stylesheet" />
 		<link href="css/icons-extra.css" rel="stylesheet" />
 		<link href="css/style.css" rel="stylesheet" />
@@ -76,7 +76,7 @@
 				<ul class="mui-table-view mui-table-view-chevron">
 					<li class="mui-table-view-cell">
 						自动登录
-						<div id="autoLogin" class="mui-switch">
+						<div id="autoLogin" class="mui-switch mui-active">
 							<div class="mui-switch-handle"></div>
 						</div>
 					</li>
@@ -99,6 +99,7 @@
 
 				var settings = app.getSettings();
 				var state = app.getState();
+				var loginPhone = app.getLoginPhone();
 
 				$.plusReady(function() {
 					app.log();
@@ -128,6 +129,7 @@
 						}, 1000);
 						return false;
 					};
+
 				});
 
 				//按钮
@@ -137,6 +139,9 @@
 				var forgetButton = doc.getElementById('forgetPassword');
 
 				var phone = doc.getElementById('phone');
+					if(loginPhone){
+						phone.value = loginPhone;
+					}
 				var user_pwd = doc.getElementById('user_pwd');
 				loginButton.addEventListener('tap', function(event) {
 					var loginInfo = {
@@ -164,7 +169,8 @@
 							mui.toast(res.info);
 						else {
 							app.setState(res.data); //本地保存token
-							plus.nativeUI.toast(res.info);
+							mui.toast(res.info);
+							app.saveLoginPhone(loginInfo.phone);
 							toIndex();
 						}
 					},function(xhr){
@@ -236,13 +242,15 @@
 							render: "always",
 							titleNView: { //详情页原生导航配置
 								backgroundColor: '#fff', //导航栏背景色
-								titleText: '众帮',
+								titleText: '大神',
+								titleSize:'20px',
 								buttons: [{
-									text: '＋',
+									fontSrc:'/fonts/mui.ttf',
+									text:'\ue263',
 									fontSize: '20px',
 									float: 'right',
 									color: '#3777D9',
-									onclick: toAsk
+									//onclick: toAsk
 								}]
 							}
 						},

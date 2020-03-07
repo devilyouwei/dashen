@@ -237,12 +237,12 @@
 			#reward {
 				z-index: 9;
 				position: absolute;
-				top: 90px;
+				top: 60px;
 				right: 0px;
 				display: none;
 				text-align: center;
 				font-size: 20px;
-				padding: 10px 20px;
+				padding: 10px 10px;
 				background: #CF2D28;
 				color: #fff;
 			}
@@ -251,12 +251,15 @@
 
 	<body>
 		<div class="mui-content" id="mui-content">
-			<article class="mui-article mui-padding-sm">
+			<article class="mui-article mui-padding-sm mui-margin-bottom-lg">
 				<div class="mui-article-hd">
 					<h3 class="mui-article-title mui-text-center">{{item.title}}</h3>
+					<div class="mui-article-meta mui-padding-top-xs">服务编号：{{item.format_id}}</div>
 					<div class="mui-article-meta mui-padding-top-xs">发布时间：{{item.update_time}}</div>
 					<div class="mui-article-meta mui-padding-top-xs">需求方：{{item.user_name}}</div>
+					<!--
 					<div class="mui-article-meta mui-padding-top-xs"><i class="mui-icon icon-star" v-for="n in item.star">&nbsp;</i></div>
+					-->
 					<h2 id="reward">{{item.reward}}<br><span v-show="item.price">￥{{item.price}}</span></h2>
 					<div class="mui-article-meta mui-padding-top-xs" v-if="!item.message==''">留言：{{item.message}}</div>
 				</div>
@@ -397,11 +400,11 @@
 						}
 					};
 					if(bh) {
-						msg.href = SHARE_URL;
-						msg.title = "众帮分享";
-						msg.content = "分享被接单可获得分红";
-						msg.thumbs = ['../images/android.jpg'];
-						msg.pictures = ['../images/android.jpg'];
+						msg.href = SHARE_URL+"/qid/"+vue.item.id+"/sid/"+app.getUserInfo().id;
+						msg.title = "呀哦服务-"+vue.item.title;
+						msg.content = "我在呀看到此单，分享给你，悬赏："+vue.item.price+"元";
+						msg.thumbs = ['../images/icon.png'];
+						msg.pictures = ['../images/icon.png'];
 					}
 					// 发送分享
 					if(sb.s.authenticated) {
@@ -467,8 +470,9 @@
 				function convert(item) {
 					document.getElementById("content").style.background = "#fff";
 					document.getElementById("reward").style.display = "block";
-					item.create_time = app.getLocalTime(item.create_time);
-					item.update_time = app.getLocalTime(item.update_time);
+					item.create_time = dateUtils.format(item.create_time);
+					item.update_time = dateUtils.format(item.update_time);
+					item.format_id = format_id(item.id);
 					item.star = parseInt(item.star);
 					for(var i = 0; i < 8; i++) {
 						if(item['img' + i] != "") {
@@ -622,6 +626,7 @@
 						}
 					}, "div");
 				}
+
 				//跳转到我的订单页面
 				function toMyOrder() {
 					$.openWindow({

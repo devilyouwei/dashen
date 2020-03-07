@@ -1,535 +1,547 @@
 {
-  "index.html": {
-    "resources": [
-      "js/mui.min.js",
-      "js/public.js",
-      "css/mui.min.css",
-      "login.html",
-      "fonts/mui.ttf",
-      "js/user.js",
-      "js/app.js",
-      "images/index_bg.jpg",
-      "css/font-awesome.css",
-      "fonts/fontawesome-webfont.woff",
-      "fonts/mui-icons-extra.ttf",
-      "css/icons-extra.css",
-      "css/style.css",
-      "fonts/EmojiSymbols-Regular.woff",
-      "images/iconfont-tianjia.png",
-      "images/offcanvas_bg.jpg",
-      "js/mui.view.js",
-      "images/my_icon.jpg",
-      "css/iconfont2.css",
-      "fonts/fontawesome-webfont.ttf",
-      "css/icon-colored-line.css",
-      "service.html",
-      "subpages/service.html",
-      "subpages/sns.html",
-      "subpages/ask.html",
-      "js/mui.pullToRefresh.material.js",
-      "js/mui.pullToRefresh.js",
-      "service/service.html",
-      "js/mui.lazyload.js",
-      "js/mui.lazyload.img.js",
-      "service/map.html",
-      "images/baidumap.png",
-      "images/refresh.png",
-      "images/cloud-error.png",
-      "js/vue.min.js"
-    ],
-    "refer": [
-      "login.html",
-      "user/security.html",
-      "user/personal.html",
-      "user/headinfo.html",
-      "service.html",
-      "service/map.html",
-      "service/service.html",
-      "ask/question.html",
-      "service/ask.html",
-      "user/ques_main.html",
-      "user/ques.html",
-      "offcanvas.html",
-      "service/float_user.html",
-      "service/floatUser.html",
-      "ques/detail.html"
-    ]
-  },
-  "login.html": {
-    "resources": [
-      "js/app.js",
-      "js/mui.enterfocus.js",
-      "js/user.js",
-      "images/sinaweibo.png",
-      "images/weixin.png",
-      "images/qq.png",
-      "js/mui.min.js",
-      "js/public.js",
-      "css/mui.min.css",
-      "index.html",
-      "fonts/mui.ttf",
-      "css/style.css",
-      "css/icons-extra.css"
-    ],
-    "refer": [
-      "main.html",
-      "reg.html",
-      "index.html",
-      "forget_password.html",
-      "service/ask.html"
-    ]
-  },
-  "reg.html": {
-    "resources": [
-      "fonts/mui.ttf",
-      "css/style.css",
-      "js/user.js",
-      "js/mui.min.js",
-      "js/public.js",
-      "css/mui.min.css",
-      "js/app.js",
-      "reg.html"
-    ],
-    "refer": [
-      "login.html",
-      "reg.html"
-    ]
-  },
-  "forget_password.html": {
-    "resources": [
-      "fonts/mui.ttf",
-      "css/style.css",
-      "js/app.js",
-      "js/mui.min.js",
-      "css/mui.min.css"
-    ],
-    "refer": []
-  },
-  "user/security.html": {
-    "resources": [
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "fonts/mui.ttf",
-      "js/mui.view.js",
-      "js/app.js",
-      "offcanvas.html",
-      "css/style.css"
-    ],
-    "refer": [
-      "login.html",
-      "user/login_log.html",
-      "offcanvas.html"
-    ]
-  },
-  "user/personal.html": {
-    "resources": [
-      "js/mui.min.js",
-      "fonts/mui.ttf",
-      "css/mui.min.css",
-      "js/app.js",
-      "js/mui.view.js",
-      "user/personal.html",
-      "js/mui.picker.min.js",
-      "css/mui.picker.min.css",
-      "js/mui.poppicker.js",
-      "js/city.data.js",
-      "css/mui.poppicker.css",
-      "js/city.data-3.js",
-      "offcanvas.html",
-      "css/style.css"
-    ],
-    "refer": [
-      "login.html",
-      "offcanvas.html"
-    ]
-  },
-  "user/headinfo.html": {
-    "resources": [
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "css/style.css",
-      "fonts/mui.ttf",
-      "images/my_icon.jpg",
-      "js/mui.imageViewer.js",
-      "js/mui.zoom.js",
-      "js/mui.previewimage.js",
-      "js/app.js",
-      "offcanvas.html"
-    ],
-    "refer": [
-      "user/cropper.html",
-      "login.html",
-      "offcanvas.html"
-    ]
-  },
-  "user/cropper.html": {
-    "resources": [
-      "js/exif.js",
-      "js/fastclick.js",
-      "js/jquery-1.11.2.min.js",
-      "js/mui.min.js",
-      "js/cropper-img.js",
-      "js/cropper.min.js",
-      "css/iconfont.css",
-      "css/mui.min.css",
-      "css/user-information.css",
-      "css/cropper.css",
-      "fonts/iconfont.ttf",
-      "css/style.css",
-      "js/app.js",
-      "fonts/mui.ttf"
-    ],
-    "refer": []
-  },
-  "service/map.html": {
-    "resources": [
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "fonts/mui.ttf",
-      "js/app.js",
-      "css/style.css",
-      "images/refresh.png",
-      "images/baidumap.png"
-    ],
-    "refer": [
-      "service/floatUser.html"
-    ]
-  },
-  "user/login_log.html": {
-    "resources": [
-      "js/app.js",
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "css/style.css",
-      "fonts/mui.ttf",
-      "images/linux.jpg",
-      "images/android.jpg",
-      "images/apple.jpg"
-    ],
-    "refer": []
-  },
-  "service/service.html": {
-    "resources": [
-      "fonts/mui.ttf"
-    ],
-    "refer": []
-  },
-  "ask/question.html": {
-    "resources": [
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "css/feedback.css",
-      "fonts/mui.ttf",
-      "js/feedback.js",
-      "images/iconfont-tianjia.png",
-      "js/app.js",
-      "css/style.css"
-    ],
-    "refer": []
-  },
-  "service/ask.html": {
-    "resources": [
-      "js/app.js",
-      "js/mui.min.js",
-      "fonts/mui.ttf",
-      "css/mui.min.css",
-      "css/style.css",
-      "images/iconfont-tianjia.png",
-      "images/loading.gif",
-      "images/microphone-icon.png",
-      "css/font-awesome.css",
-      "images/start.png",
-      "images/stop-red.ico",
-      "images/start.ico",
-      "js/vue.min.js"
-    ],
-    "refer": []
-  },
-  "user/ques_main.html": {
-    "resources": [
-      "js/app.js",
-      "user/ques_sub.html",
-      "js/mui.min.js",
-      "css/mui.min.css"
-    ],
-    "refer": [
-      "user/ques_sub.html"
-    ]
-  },
-  "user/ques_sub.html": {
-    "resources": [
-      "css/mui.min.css"
-    ],
-    "refer": []
-  },
-  "user/ques.html": {
-    "resources": [
-      "css/mui.min.css",
-      "js/mui.min.js",
-      "js/mui.pullToRefresh.js",
-      "js/mui.pullToRefresh.material.js",
-      "js/app.js",
-      "images/no-img.jpg",
-      "css/style.css",
-      "offcanvas.html",
-      "images/no-img.png"
-    ],
-    "refer": [
-      "ques/show.html",
-      "offcanvas.html"
-    ]
-  },
-  "ques/show.html": {
-    "resources": [
-      "css/mui.min.css",
-      "js/app.js",
-      "js/mui.min.js",
-      "images/loading.gif",
-      "css/style.css",
-      "js/mui.zoom.js",
-      "js/mui.previewimage.js",
-      "css/font-awesome.css",
-      "images/stop-red.ico",
-      "images/start.ico",
-      "images/load.gif"
-    ],
-    "refer": []
-  },
-  "offcanvas.html": {
-    "resources": [
-      "images/my_icon.jpg",
-      "images/offcanvas_bg.jpg",
-      "js/app.js",
-      "css/mui.min.css",
-      "css/style.css",
-      "css/font-awesome.css",
-      "css/icons-extra.css",
-      "fonts/fontawesome-webfont.ttf",
-      "js/mui.min.js",
-      "user/headinfo.html",
-      "user/personal.html",
-      "user/ques.html",
-      "user/security.html",
-      "fonts/mui.ttf"
-    ],
-    "refer": [
-      "user/headinfo.html",
-      "user/personal.html",
-      "user/ques.html",
-      "user/security.html",
-      "user/wallet.html",
-      "user/myQues.html",
-      "user/myOrder.html"
-    ]
-  },
-  "service/float_user.html": {
-    "resources": [
-      "js/mui.js",
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "images/load.gif",
-      "js/app.js",
-      "js/vue.min.js",
-      "images/girl.gif",
-      "css/style.css",
-      "css/font-awesome.css",
-      "images/floatbg.jpg",
-      "fonts/mui.ttf"
-    ],
-    "refer": [
-      "service/list_ques.html",
-      "service/home.html"
-    ]
-  },
-  "service/list_ques.html": {
-    "resources": [
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "images/android.jpg"
-    ],
-    "refer": []
-  },
-  "service/home.html": {
-    "resources": [
-      "js/app.js",
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "js/vue.min.js",
-      "images/homebg.jpg",
-      "images/apple.jpg",
-      "css/font-awesome.css",
-      "fonts/fontawesome-webfont.ttf",
-      "images/no-img.jpg",
-      "images/no-img.png",
-      "js/mui.pullToRefresh.js"
-    ],
-    "refer": [
-      "ques/detail.html"
-    ]
-  },
-  "ques/detail.html": {
-    "resources": [
-      "js/app.js",
-      "images/stop-red.ico",
-      "images/start.ico",
-      "js/mui.zoom.js",
-      "css/font-awesome.css",
-      "js/mui.min.js",
-      "images/loading.gif",
-      "css/mui.min.css",
-      "js/mui.previewimage.js",
-      "css/style.css",
-      "js/vue.min.js",
-      "images/meta-bg.png",
-      "images/load.gif",
-      "fonts/fontawesome-webfont.ttf",
-      "fonts/mui.ttf"
-    ],
-    "refer": [
-      "ques/agreement.html",
-      "user/myOrder.html"
-    ]
-  },
-  "user/wallet.html": {
-    "resources": [
-      "js/mui.js",
-      "css/mui.css",
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "css/style.css",
-      "images/pie-chart.png",
-      "css/font-awesome.css",
-      "js/app.js",
-      "fonts/mui.ttf",
-      "fonts/fontawesome-webfont.ttf"
-    ],
-    "refer": [
-      "user/pay.html"
-    ]
-  },
-  "user/pay.html": {
-    "resources": [
-      "css/mui.min.css",
-      "images/weixinpay.png",
-      "js/mui.min.js"
-    ],
-    "refer": []
-  },
-  "service/floatUser.html": {
-    "resources": [
-      "images/floatbg.jpg",
-      "images/load.gif",
-      "js/app.js",
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "css/style.css",
-      "js/vue.min.js",
-      "css/font-awesome.css"
-    ],
-    "refer": [
-      "service/home.html"
-    ]
-  },
-  "user/myQues.html": {
-    "resources": [
-      "js/mui.pullToRefresh.js",
-      "js/mui.pullToRefresh.material.js",
-      "css/mui.min.css",
-      "css/style.css",
-      "images/no-img.png",
-      "js/app.js",
-      "js/mui.min.js",
-      "js/vue.min.js",
-      "fonts/mui.ttf"
-    ],
-    "refer": [
-      "user/showQues.html"
-    ]
-  },
-  "user/showQues.html": {
-    "resources": [
-      "js/app.js",
-      "js/mui.zoom.js",
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "js/mui.previewimage.js",
-      "css/style.css",
-      "images/load.gif",
-      "images/stop-red.ico",
-      "images/start.ico",
-      "css/font-awesome.css",
-      "fonts/mui.ttf",
-      "fonts/fontawesome-webfont.ttf",
-      "js/vue.min.js"
-    ],
-    "refer": [
-      "user/showQuesOrder.html",
-      "user/showPicker.html"
-    ]
-  },
-  "ques/agreement.html": {
-    "resources": [
-      "js/mui.min.js",
-      "css/mui.min.css"
-    ],
-    "refer": []
-  },
-  "user/myOrder.html": {
-    "resources": [
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "js/app.js",
-      "css/style.css",
-      "js/vue.min.js",
-      "js/mui.pullToRefresh.js",
-      "js/mui.pullToRefresh.material.js",
-      "fonts/mui.ttf",
-      "images/my_icon.jpg"
-    ],
-    "refer": [
-      "ques/detail.html",
-      "user/showOrder.html"
-    ]
-  },
-  "user/showOrder.html": {
-    "resources": [
-      "css/mui.min.css",
-      "css/style.css",
-      "js/app.js",
-      "js/mui.min.js",
-      "js/vue.min.js",
-      "fonts/mui.ttf",
-      "images/maploading.gif",
-      "images/my_icon.jpg"
-    ],
-    "refer": [
-      "ques/detail.html"
-    ]
-  },
-  "user/showQuesOrder.html": {
-    "resources": [
-      "css/mui.min.css",
-      "js/mui.min.js",
-      "js/app.js",
-      "images/maploading.gif",
-      "css/style.css",
-      "js/vue.min.js"
-    ],
-    "refer": []
-  },
-  "user/showPicker.html": {
-    "resources": [
-      "js/vue.min.js",
-      "js/app.js",
-      "js/mui.min.js",
-      "css/mui.min.css",
-      "css/style.css",
-      "images/maploading.gif",
-      "css/font-awesome.css",
-      "fonts/mui.ttf",
-      "fonts/fontawesome-webfont.ttf",
-      "css/icons-extra.css"
-    ],
-    "refer": []
-  }
+	"index.html": {
+		"resources": [
+			"js/mui.min.js",
+			"js/public.js",
+			"css/mui.min.css",
+			"login.html",
+			"fonts/mui.ttf",
+			"js/user.js",
+			"js/app.js",
+			"images/index_bg.jpg",
+			"css/font-awesome.css",
+			"fonts/fontawesome-webfont.woff",
+			"fonts/mui-icons-extra.ttf",
+			"css/icons-extra.css",
+			"css/style.css",
+			"fonts/EmojiSymbols-Regular.woff",
+			"images/iconfont-tianjia.png",
+			"images/offcanvas_bg.jpg",
+			"js/mui.view.js",
+			"images/my_icon.jpg",
+			"css/iconfont2.css",
+			"fonts/fontawesome-webfont.ttf",
+			"css/icon-colored-line.css",
+			"service.html",
+			"subpages/service.html",
+			"subpages/sns.html",
+			"subpages/ask.html",
+			"js/mui.pullToRefresh.material.js",
+			"js/mui.pullToRefresh.js",
+			"service/service.html",
+			"js/mui.lazyload.js",
+			"js/mui.lazyload.img.js",
+			"service/map.html",
+			"images/baidumap.png",
+			"images/refresh.png",
+			"images/cloud-error.png",
+			"js/vue.min.js"
+		],
+		"refer": [
+			"login.html",
+			"user/security.html",
+			"user/personal.html",
+			"user/headinfo.html",
+			"service.html",
+			"service/map.html",
+			"service/service.html",
+			"ask/question.html",
+			"service/ask.html",
+			"user/ques_main.html",
+			"user/ques.html",
+			"offcanvas.html",
+			"service/float_user.html",
+			"service/floatUser.html",
+			"ques/detail.html"
+		]
+	},
+	"login.html": {
+		"resources": [
+			"js/app.js",
+			"js/mui.enterfocus.js",
+			"js/user.js",
+			"images/sinaweibo.png",
+			"images/weixin.png",
+			"images/qq.png",
+			"js/mui.min.js",
+			"js/public.js",
+			"css/mui.min.css",
+			"index.html",
+			"fonts/mui.ttf",
+			"css/style.css",
+			"css/icons-extra.css"
+		],
+		"refer": [
+			"main.html",
+			"reg.html",
+			"index.html",
+			"forget_password.html",
+			"service/ask.html"
+		]
+	},
+	"reg.html": {
+		"resources": [
+			"fonts/mui.ttf",
+			"css/style.css",
+			"js/user.js",
+			"js/mui.min.js",
+			"js/public.js",
+			"css/mui.min.css",
+			"js/app.js",
+			"reg.html"
+		],
+		"refer": [
+			"login.html",
+			"reg.html"
+		]
+	},
+	"forget_password.html": {
+		"resources": [
+			"fonts/mui.ttf",
+			"css/style.css",
+			"js/app.js",
+			"js/mui.min.js",
+			"css/mui.min.css"
+		],
+		"refer": []
+	},
+	"user/security.html": {
+		"resources": [
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"fonts/mui.ttf",
+			"js/mui.view.js",
+			"js/app.js",
+			"offcanvas.html",
+			"css/style.css",
+			"images/icon.png"
+		],
+		"refer": [
+			"login.html",
+			"user/login_log.html",
+			"offcanvas.html"
+		]
+	},
+	"user/personal.html": {
+		"resources": [
+			"js/mui.min.js",
+			"fonts/mui.ttf",
+			"css/mui.min.css",
+			"js/app.js",
+			"js/mui.view.js",
+			"user/personal.html",
+			"js/mui.picker.min.js",
+			"css/mui.picker.min.css",
+			"js/mui.poppicker.js",
+			"js/city.data.js",
+			"css/mui.poppicker.css",
+			"js/city.data-3.js",
+			"offcanvas.html",
+			"css/style.css"
+		],
+		"refer": [
+			"login.html",
+			"offcanvas.html"
+		]
+	},
+	"user/headinfo.html": {
+		"resources": [
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"css/style.css",
+			"fonts/mui.ttf",
+			"images/my_icon.jpg",
+			"js/mui.imageViewer.js",
+			"js/mui.zoom.js",
+			"js/mui.previewimage.js",
+			"js/app.js",
+			"offcanvas.html"
+		],
+		"refer": [
+			"user/cropper.html",
+			"login.html",
+			"offcanvas.html"
+		]
+	},
+	"user/cropper.html": {
+		"resources": [
+			"js/exif.js",
+			"js/fastclick.js",
+			"js/jquery-1.11.2.min.js",
+			"js/mui.min.js",
+			"js/cropper-img.js",
+			"js/cropper.min.js",
+			"css/iconfont.css",
+			"css/mui.min.css",
+			"css/user-information.css",
+			"css/cropper.css",
+			"fonts/iconfont.ttf",
+			"css/style.css",
+			"js/app.js",
+			"fonts/mui.ttf"
+		],
+		"refer": []
+	},
+	"service/map.html": {
+		"resources": [
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"fonts/mui.ttf",
+			"js/app.js",
+			"css/style.css",
+			"images/refresh.png",
+			"images/baidumap.png"
+		],
+		"refer": [
+			"service/floatUser.html"
+		]
+	},
+	"user/login_log.html": {
+		"resources": [
+			"js/app.js",
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"css/style.css",
+			"fonts/mui.ttf",
+			"images/linux.jpg",
+			"images/android.jpg",
+			"images/apple.jpg",
+			"images/weixin.png",
+			"images/unkown.jpg"
+		],
+		"refer": []
+	},
+	"service/service.html": {
+		"resources": [
+			"fonts/mui.ttf"
+		],
+		"refer": []
+	},
+	"ask/question.html": {
+		"resources": [
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"css/feedback.css",
+			"fonts/mui.ttf",
+			"js/feedback.js",
+			"images/iconfont-tianjia.png",
+			"js/app.js",
+			"css/style.css"
+		],
+		"refer": []
+	},
+	"service/ask.html": {
+		"resources": [
+			"js/app.js",
+			"js/mui.min.js",
+			"fonts/mui.ttf",
+			"css/mui.min.css",
+			"css/style.css",
+			"images/iconfont-tianjia.png",
+			"images/loading.gif",
+			"images/microphone-icon.png",
+			"css/font-awesome.css",
+			"images/start.png",
+			"images/stop-red.ico",
+			"images/start.ico",
+			"js/vue.min.js",
+			"fonts/fontawesome-webfont.ttf"
+		],
+		"refer": [
+			"user/wallet.html"
+		]
+	},
+	"user/ques_main.html": {
+		"resources": [
+			"js/app.js",
+			"user/ques_sub.html",
+			"js/mui.min.js",
+			"css/mui.min.css"
+		],
+		"refer": [
+			"user/ques_sub.html"
+		]
+	},
+	"user/ques_sub.html": {
+		"resources": [
+			"css/mui.min.css"
+		],
+		"refer": []
+	},
+	"user/ques.html": {
+		"resources": [
+			"css/mui.min.css",
+			"js/mui.min.js",
+			"js/mui.pullToRefresh.js",
+			"js/mui.pullToRefresh.material.js",
+			"js/app.js",
+			"images/no-img.jpg",
+			"css/style.css",
+			"offcanvas.html",
+			"images/no-img.png"
+		],
+		"refer": [
+			"ques/show.html",
+			"offcanvas.html"
+		]
+	},
+	"ques/show.html": {
+		"resources": [
+			"css/mui.min.css",
+			"js/app.js",
+			"js/mui.min.js",
+			"images/loading.gif",
+			"css/style.css",
+			"js/mui.zoom.js",
+			"js/mui.previewimage.js",
+			"css/font-awesome.css",
+			"images/stop-red.ico",
+			"images/start.ico",
+			"images/load.gif"
+		],
+		"refer": []
+	},
+	"offcanvas.html": {
+		"resources": [
+			"images/my_icon.jpg",
+			"images/offcanvas_bg.jpg",
+			"js/app.js",
+			"css/mui.min.css",
+			"css/style.css",
+			"css/font-awesome.css",
+			"css/icons-extra.css",
+			"fonts/fontawesome-webfont.ttf",
+			"js/mui.min.js",
+			"user/headinfo.html",
+			"user/personal.html",
+			"user/ques.html",
+			"user/security.html",
+			"fonts/mui.ttf"
+		],
+		"refer": [
+			"user/headinfo.html",
+			"user/personal.html",
+			"user/ques.html",
+			"user/security.html",
+			"user/wallet.html",
+			"user/myQues.html",
+			"user/myOrder.html",
+			"service/ask.html"
+		]
+	},
+	"service/float_user.html": {
+		"resources": [
+			"js/mui.js",
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"images/load.gif",
+			"js/app.js",
+			"js/vue.min.js",
+			"images/girl.gif",
+			"css/style.css",
+			"css/font-awesome.css",
+			"images/floatbg.jpg",
+			"fonts/mui.ttf"
+		],
+		"refer": [
+			"service/list_ques.html",
+			"service/home.html"
+		]
+	},
+	"service/list_ques.html": {
+		"resources": [
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"images/android.jpg"
+		],
+		"refer": []
+	},
+	"service/home.html": {
+		"resources": [
+			"js/app.js",
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"js/vue.min.js",
+			"images/homebg.jpg",
+			"images/apple.jpg",
+			"css/font-awesome.css",
+			"fonts/fontawesome-webfont.ttf",
+			"images/no-img.jpg",
+			"images/no-img.png",
+			"js/mui.pullToRefresh.js"
+		],
+		"refer": [
+			"ques/detail.html"
+		]
+	},
+	"ques/detail.html": {
+		"resources": [
+			"js/app.js",
+			"images/stop-red.ico",
+			"images/start.ico",
+			"js/mui.zoom.js",
+			"css/font-awesome.css",
+			"js/mui.min.js",
+			"images/loading.gif",
+			"css/mui.min.css",
+			"js/mui.previewimage.js",
+			"css/style.css",
+			"js/vue.min.js",
+			"images/meta-bg.png",
+			"images/load.gif",
+			"fonts/fontawesome-webfont.ttf",
+			"fonts/mui.ttf"
+		],
+		"refer": [
+			"ques/agreement.html",
+			"user/myOrder.html"
+		]
+	},
+	"user/wallet.html": {
+		"resources": [
+			"js/mui.js",
+			"css/mui.css",
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"css/style.css",
+			"images/pie-chart.png",
+			"css/font-awesome.css",
+			"js/app.js",
+			"fonts/mui.ttf",
+			"fonts/fontawesome-webfont.ttf"
+		],
+		"refer": [
+			"user/pay.html"
+		]
+	},
+	"user/pay.html": {
+		"resources": [
+			"css/mui.min.css",
+			"images/weixinpay.png",
+			"js/mui.min.js"
+		],
+		"refer": []
+	},
+	"service/floatUser.html": {
+		"resources": [
+			"images/floatbg.jpg",
+			"images/load.gif",
+			"js/app.js",
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"css/style.css",
+			"js/vue.min.js",
+			"css/font-awesome.css",
+			"images/my_icon.jpg",
+			"fonts/mui.ttf"
+		],
+		"refer": [
+			"service/home.html"
+		]
+	},
+	"user/myQues.html": {
+		"resources": [
+			"js/mui.pullToRefresh.js",
+			"js/mui.pullToRefresh.material.js",
+			"css/mui.min.css",
+			"css/style.css",
+			"images/no-img.png",
+			"js/app.js",
+			"js/mui.min.js",
+			"js/vue.min.js",
+			"fonts/mui.ttf"
+		],
+		"refer": [
+			"user/showQues.html"
+		]
+	},
+	"user/showQues.html": {
+		"resources": [
+			"js/app.js",
+			"js/mui.zoom.js",
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"js/mui.previewimage.js",
+			"css/style.css",
+			"images/load.gif",
+			"images/stop-red.ico",
+			"images/start.ico",
+			"css/font-awesome.css",
+			"fonts/mui.ttf",
+			"fonts/fontawesome-webfont.ttf",
+			"js/vue.min.js"
+		],
+		"refer": [
+			"user/showQuesOrder.html",
+			"user/showPicker.html"
+		]
+	},
+	"ques/agreement.html": {
+		"resources": [
+			"js/mui.min.js",
+			"css/mui.min.css"
+		],
+		"refer": []
+	},
+	"user/myOrder.html": {
+		"resources": [
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"js/app.js",
+			"css/style.css",
+			"js/vue.min.js",
+			"js/mui.pullToRefresh.js",
+			"js/mui.pullToRefresh.material.js",
+			"fonts/mui.ttf",
+			"images/my_icon.jpg"
+		],
+		"refer": [
+			"ques/detail.html",
+			"user/showOrder.html"
+		]
+	},
+	"user/showOrder.html": {
+		"resources": [
+			"css/mui.min.css",
+			"css/style.css",
+			"js/app.js",
+			"js/mui.min.js",
+			"js/vue.min.js",
+			"fonts/mui.ttf",
+			"images/maploading.gif",
+			"images/my_icon.jpg",
+			"css/font-awesome.css",
+			"fonts/fontawesome-webfont.ttf"
+		],
+		"refer": [
+			"ques/detail.html"
+		]
+	},
+	"user/showQuesOrder.html": {
+		"resources": [
+			"css/mui.min.css",
+			"js/mui.min.js",
+			"js/app.js",
+			"images/maploading.gif",
+			"css/style.css",
+			"js/vue.min.js"
+		],
+		"refer": []
+	},
+	"user/showPicker.html": {
+		"resources": [
+			"js/vue.min.js",
+			"js/app.js",
+			"js/mui.min.js",
+			"css/mui.min.css",
+			"css/style.css",
+			"images/maploading.gif",
+			"css/font-awesome.css",
+			"fonts/mui.ttf",
+			"fonts/fontawesome-webfont.ttf",
+			"css/icons-extra.css",
+			"images/my_icon.jpg"
+		],
+		"refer": []
+	}
 }

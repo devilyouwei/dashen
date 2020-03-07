@@ -257,8 +257,11 @@
 			<article class="mui-article mui-padding-sm">
 				<div class="mui-article-hd">
 					<h3 class="mui-article-title ani-load" id="title">&nbsp;</h3>
+					<div class="mui-article-meta" id="format_id">&nbsp;</div>
 					<div class="mui-article-meta ani-load" id="update_time">&nbsp;</div>
+					<!--
 					<div class="mui-article-meta ani-load" id="star">&nbsp;</div>
+					-->
 					<div class="mui-article-meta ani-load" id="reward">&nbsp;</div>
 				</div>
 				<br />
@@ -325,6 +328,7 @@
 							$.back();
 						} else {
 							bind_show_order(res.data.state);
+							document.getElementById("format_id").innerHTML = "服务编号："+format_id(res.data['id']);
 							//根据key为dom配对值
 							for(key in res.data) {
 								var dom = document.getElementById(key)
@@ -343,6 +347,7 @@
 											dom.style.display = "block";
 											break;
 										default:
+										/*
 											if(dom.id == "star") {
 												dom.innerText = "难度等级：";
 												while(res.data[key]--) {
@@ -353,6 +358,7 @@
 												}
 												break;
 											}
+											*/
 											if(dom.id == "reward") {
 												switch(res.data['reward']) {
 													case "金钱悬赏":

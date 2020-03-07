@@ -60,6 +60,49 @@
 				font-weight: 600;
 				font-size: 1.2em;
 			}
+			
+			#tab {
+				display: none;
+				white-space: nowrap;
+			}
+			
+			#search-box {
+				display: none;
+			}
+			
+			#search-box .mui-row:first-child {
+				background: #fff;
+			}
+			
+			#search-box .mui-row:last-child .mui-col-xs-4 {
+				padding-top: 8px;
+				font-size: 16px;
+				color: dodgerblue;
+			}
+			
+			#tab a {
+				color: #000000;
+			}
+			
+			#tab a.active {
+				color: #007aff;
+				border-bottom: solid 2px #007aff;
+			}
+			
+			#news_box {
+				margin-top: 10px;
+				text-align: center;
+				display: none;
+			}
+			
+			#touch_news {
+				color: #fff;
+				opacity: .5;
+				border-radius: 10px;
+				background: #222222;
+				font-size: 12px;
+				padding: 8px 12px;
+			}
 		</style>
 	</head>
 
@@ -79,21 +122,53 @@
 				</div>
 			</div>
 
-			<button class="mui-btn mui-btn-primary btn-float" id="showMap"><i class="icon-location-arrow"></i></button>
-			<p class="mui-content-padded">最新未被接单</p>
+			<!--顶部分类选项卡-->
+			<div id="tab" class="mui-scroll-wrapper mui-padding-vertical-xs">
+				<div class="mui-scroll">
+					<a class="mui-padding-horizontal-xs" data-tab-id="0">全部</a>
+					<a class="mui-padding-horizontal-xs" v-for="item in tabs" v-bind:data-tab-id="item.id">{{item.title}}</a>
+				</div>
+			</div>
+
+			<div id="search-box">
+				<div class="mui-row mui-padding-xs">
+					<div class="mui-col-xs-7">
+						<input class="mui-margin-0" id="search" type="search" placeholder="搜索内容" />
+					</div>
+					<div class="mui-col-xs-5">
+						<button class="mui-btn mui-btn-grey mui-margin-left" id="search_confirm">搜索</button>
+						<button class="mui-btn mui-btn-default mui-pull-right" id="search_cancel">取消</button>
+					</div>
+				</div>
+
+				<div class="mui-row mui-padding-top-sm mui-padding-horizontal-sm">
+					<div class="mui-col-xs-4">
+						最新需求列表
+					</div>
+					<div class="mui-col-xs-8">
+						<button class="mui-btn mui-btn-primary" id="myLoc"><i class="icon-location-arrow">&nbsp;</i>我的位置</button>
+						<button class="mui-btn mui-btn-primary mui-pull-right" id="showMap"><i class="icon-location-arrow">&nbsp;</i>订单分布图</button>
+					</div>
+				</div>
+			</div>
+
 			<div id="list">
+				<div id="news_box">
+					<span id="touch_news"></span>
+				</div>
 				<div class="cards">
 					<div class="mui-card" v-for="item in items">
 						<div class="mui-card-header mui-card-media">
-							<img v-bind:src="item.my_icon_sm" onerror="this.src='images/my_icon.jpg'"/>
+							<img v-bind:src="item.my_icon_sm" onerror="this.src='images/my_icon.jpg'" />
 							<div class="mui-media-body">
 								发单方：{{item.user_name}}
 								<p>{{item.create_time}}</p>
+								<p>服务编号：{{item.format_id}}</p>
 							</div>
 						</div>
 						<div class="mui-card-content">
 							<div class="mui-card-content-inner">
-								<p>需求：{{item.title}}</p>
+								<p>需求类别：{{item.title}}</p>
 								<p style="color: #333;">概述：{{item.content}}</p>
 								<p v-show="!item.loc==''"><i class="mui-icon mui-icon-location-filled">&nbsp;</i>{{item.loc}}</p>
 							</div>
@@ -125,24 +200,24 @@
 						}
 					}
 				});
+				var TAB_ID = 0; //当前分类ID
 				var _self = null; //当前主窗口
 				var _map = null;
 				var _offcanvas = null; //offcanvas子窗口
 				var MIN_ID = 0;
+				var news_interval = null; //循环新消息计时器
 
 				var state = app.getState();
-				var check = doc.getElementById("check");
-				var refresh = doc.getElementById("refresh");
 				var vue = new Vue({
-					el: '#list',
+					el: '.mui-content',
 					data: {
-						items: []
+						items: [],
+						tabs: []
 					}
 				});
 
 				$.plusReady(function() {
 					app.log();
-
 					//本地检测
 					if(!state.token) {
 						mui.toast("登陆状态失效");
@@ -153,7 +228,7 @@
 
 					//初始化两大子页面
 					setTimeout(init_offcanvs, 300)
-					setTimeout(check_login, 500)
+					setTimeout(check_login, 400)
 
 					//返回按钮退出
 					var backButtonPress = 0;
@@ -204,7 +279,6 @@
 					});
 				});
 				window.addEventListener("checkLogin", check_login); //其他页面刷新本地数据
-
 				//绘制头部
 				function init_title() {
 					//绘制顶部图标
@@ -246,6 +320,57 @@
 					}, false);
 				}
 
+				//初始化分类卡
+				function init_tabs() {
+					app.request("Ques", "getQuesTitle", {}, function(res) {
+						if(res.status == 1) {
+							vue.tabs = res.data;
+							doc.getElementById("tab").style.display = "block";
+							doc.getElementById("search-box").style.display = "block";
+							//分类选择
+							mui("#tab").on("tap", "a", function() {
+								//去除已经激活tab的样式
+								var active = doc.querySelector(".active");
+								if(active)
+									active.classList.remove("active");
+								//激活当前tab卡
+								this.classList.add("active");
+								//清空内容
+								vue.items = [];
+								search.value = ""; //重置搜素哦
+								TAB_ID = this.getAttribute("data-tab-id");
+								init_index_ques();
+							});
+						} else {
+							mui.toast(res.info);
+						}
+					}, function(xhr) {
+
+					});
+				}
+
+				var search = doc.getElementById("search");
+				var search_confirm = doc.getElementById("search_confirm");
+				var search_cancel = doc.getElementById("search_cancel");
+				//监听搜索
+				search.addEventListener("keyup", function(e) {
+					var self = this;
+					if(e && e.keyCode == 13) {
+						init_index_ques();
+						setTimeout(function() {
+							self.blur();
+						}, 300);
+					}
+				});
+				//搜索按钮
+				search_confirm.addEventListener("tap", function() {
+					init_index_ques();
+				});
+				search_cancel.addEventListener("tap", function() {
+					search.value = "";
+					init_index_ques();
+				});
+
 				//检测登陆状态，并刷新本地数据
 				function check_login() {
 					//直到检查登陆状态结束后才关闭载入界面和全屏
@@ -258,6 +383,8 @@
 							//如果检测服务器存在且本地相对应不操作
 							app.setUserInfo(res.data); //存储服务器获取的个人信息
 							mui.fire(_offcanvas, "updateHeadInfo"); //策划菜单更新信息
+							//update_user_position();
+							init_tabs();
 							init_index_ques();
 							//尚未完善资料
 							if(res.data.is_authentic == 0) {
@@ -271,7 +398,7 @@
 						//关闭载入界面和全屏
 						plus.navigator.closeSplashscreen();
 						unfullscreen();
-						check.style.display = "block"; //显示重试按钮
+						doc.getElementById("check").style.display = "block"; //显示重试按钮
 					}, "none");
 				}
 
@@ -288,6 +415,7 @@
 					_offcanvas.show(); //显示offcanvas
 
 					//启用侧滑拖拽操作，延时的原因是menu页是延时创建的，所以这里需要相应延时
+					/*
 					setTimeout(function() {
 						_self.drag({
 							direction: "right",
@@ -297,6 +425,7 @@
 							moveMode: "follow"
 						}, function(e) {});
 					}, 350);
+					*/
 				}
 
 				window.addEventListener("updateQues", init_index_ques);
@@ -304,7 +433,9 @@
 				//初始化主页的需求单
 				function init_index_ques() {
 					app.request("Index", "getQues", {
-						min_id: 0
+						min_id: 0,
+						tab_id: TAB_ID,
+						search: trim(search.value)
 					}, function(res) {
 						document.getElementById("list").style.display = "block";
 						$('#list').pullRefresh().endPulldown();
@@ -315,6 +446,10 @@
 						}
 						if(res.status == 1) {
 							vue.items = convert(res.data);
+							doc.getElementById("news_box").style.display = "none"; //关闭新需求消息盒子
+							//传入当前最新的需求单id。也就是最大的id
+							clearInterval(news_interval); //关闭原来的计时器
+							start_news_interval(vue.items[0].id);
 						}
 					}, function(xhr) {
 						$('#list').pullRefresh().endPulldown();
@@ -325,7 +460,9 @@
 				//加载更多主页需求单
 				function more_index_ques() {
 					app.request("Index", "getQues", {
-						min_id: MIN_ID
+						min_id: MIN_ID,
+						tab_id: TAB_ID,
+						search: trim(search.value)
 					}, function(res) {
 						$('#list').pullRefresh().endPullup();
 						if(res.login == 0) {
@@ -349,13 +486,14 @@
 
 					items.forEach(function(item) {
 						item.create_time = dateUtils.format(item.create_time);
+						item.format_id = format_id(item.id);
 					});
 					MIN_ID = items[items.length - 1].id;
 					return items;
 				}
 
-				refresh.addEventListener("tap", function() {
-					check.style.display = "none";
+				doc.getElementById("refresh").addEventListener("tap", function() {
+					doc.getElementById("check").style.display = "none";
 					check_login();
 				}, false);
 
@@ -376,12 +514,22 @@
 				}
 
 				doc.getElementById("showMap").addEventListener("tap", function() {
+					plus.nativeUI.showWaiting("定位启动中...", {
+						back: 'none'
+					}); //显示加载等待
+					create_map();
+				}, false);
+				doc.getElementById("myLoc").addEventListener("tap", function() {
+					plus.nativeUI.showWaiting("定位启动中...", {
+						back: 'none'
+					}); //显示加载等待
 					create_map();
 				}, false);
 
 				//为了避免闪屏，等到地图隐藏后才绑定跳转按钮
 				window.addEventListener("showMapNow", function() {
 					_map.show("slide-in-right", 200);
+					plus.nativeUI.closeWaiting();
 					//推迟地图刷新，防止卡顿
 					setTimeout(function() {
 						mui.fire(_map, "updateMap");
@@ -450,6 +598,47 @@
 							});
 						}
 					}, "div");
+				}
+
+				//进图app立即先更新一下坐标
+				function update_user_position() {
+					plus.geolocation.getCurrentPosition(function(p) {
+						updatePos(new plus.maps.Point(p.coords.longitude, p.coords.latitude));
+					}, function(e) {}, {
+						enableHighAccuracy: true,
+						provider: "baidu"
+					});
+				}
+
+				doc.getElementById("touch_news").addEventListener("tap", function() {
+					doc.getElementById("news_box").style.display = "none";
+					init_index_ques();
+				});
+				//获取最新需求数
+				function start_news_interval(max_id) {
+					news_interval = setInterval(function() {
+						app.request("Index", "countNewQues", {
+							id: max_id
+						}, function(res) {
+							if(res.login == 0) {
+								mui.toast(res.info);
+								return app.toLogin();
+							}
+							if(res.status == 1) {
+								if(res.data > 0) {
+									doc.getElementById("touch_news").innerText = res.data + "条新需求";
+									doc.getElementById("news_box").style.display = "block";
+									plus.audio.createPlayer("/audio/yao.mp3").play();
+									clearInterval(news_interval);
+								} else {
+								}
+							} else {
+								mui.toast("获取最新需求数目失败！");
+							}
+						}, function(xhr) {
+
+						}, "none");
+					}, 5000);
 				}
 			}(mui, document));
 		</script>
