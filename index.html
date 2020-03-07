@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>众帮</title>
+		<title>大神</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -205,6 +205,7 @@
 				var _map = null;
 				var _offcanvas = null; //offcanvas子窗口
 				var MIN_ID = 0;
+				var MAX_ID = 0;
 				var news_interval = null; //循环新消息计时器
 
 				var state = app.getState();
@@ -350,8 +351,6 @@
 				}
 
 				var search = doc.getElementById("search");
-				var search_confirm = doc.getElementById("search_confirm");
-				var search_cancel = doc.getElementById("search_cancel");
 				//监听搜索
 				search.addEventListener("keyup", function(e) {
 					var self = this;
@@ -363,10 +362,10 @@
 					}
 				});
 				//搜索按钮
-				search_confirm.addEventListener("tap", function() {
+				doc.getElementById("search_confirm").addEventListener("tap", function() {
 					init_index_ques();
 				});
-				search_cancel.addEventListener("tap", function() {
+				doc.getElementById("search_cancel").addEventListener("tap", function() {
 					search.value = "";
 					init_index_ques();
 				});
@@ -446,10 +445,12 @@
 						}
 						if(res.status == 1) {
 							vue.items = convert(res.data);
+							if(vue.items[0] && MAX_ID<vue.items[0].id)
+								MAX_ID = vue.items[0].id;
 							doc.getElementById("news_box").style.display = "none"; //关闭新需求消息盒子
 							//传入当前最新的需求单id。也就是最大的id
-							clearInterval(news_interval); //关闭原来的计时器
-							//start_news_interval(vue.items[0].id);
+							//clearInterval(news_interval); //关闭原来的计时器
+							//start_news_interval();
 						}
 					}, function(xhr) {
 						$('#list').pullRefresh().endPulldown();
@@ -614,11 +615,12 @@
 					doc.getElementById("news_box").style.display = "none";
 					init_index_ques();
 				});
+
 				//获取最新需求数
-				function start_news_interval(max_id) {
+				function start_news_interval() {
 					news_interval = setInterval(function() {
 						app.request("Index", "countNewQues", {
-							id: max_id
+							max_id: MAX_ID
 						}, function(res) {
 							if(res.login == 0) {
 								mui.toast(res.info);
@@ -629,14 +631,13 @@
 									doc.getElementById("touch_news").innerText = res.data + "条新需求";
 									doc.getElementById("news_box").style.display = "block";
 									plus.audio.createPlayer("/audio/yao.mp3").play();
-									clearInterval(news_interval);
-								} else {
-								}
+									//clearInterval(news_interval);
+								} else {}
 							} else {
 								mui.toast("获取最新需求数目失败！");
 							}
 						}, function(xhr) {
-
+							error.innerHTML = xhr.response;
 						}, "none");
 					}, 5000);
 				}

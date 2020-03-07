@@ -629,7 +629,7 @@
 						mui.confirm("该需求单将会消耗您" + question.price + "元，是否提交？", "确认提交并支付", ["否", "是"], function(e) {
 							if(e.index == 1) {
 								var money = formatPrice(app.getUserInfo()['money']);
-								if(money < question.price)
+								if(parseFloat(money) < parseFloat(question.price))
 									return mui.confirm("<font color='red'>抱歉，余额不足，无法发起！</font>", "无法发起需求", ['换个金额', '去充值'], function(e) {
 										if(e.index == 1) {
 											$.openWindow({

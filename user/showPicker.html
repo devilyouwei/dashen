@@ -305,7 +305,7 @@
 						theme.classList.add("done");
 						item.state = "已完成";
 					}
-					item.create_time = app.getLocalTime(item.create_time);
+					item.create_time = dateUtils.format(item.create_time);
 					return item;
 				}
 
@@ -335,20 +335,15 @@
 
 				//初始化地图
 				function init_map() {
-					geoGetPos(function(p) {
+					//建立地图
+					map = new plus.maps.Map("map");
+					//实时显示用户位置
+					map.showUserLocation(true);
+					mapGetPos(map, function(p) {
 						//自己位置
 						var pStart = p;
 						//上传至服务器
 						updatePos(pStart);
-
-						//建立地图
-						map = new plus.maps.Map("map", {
-							center: pStart,
-							zoom: 15,
-						});
-
-						//实时显示用户位置
-						map.showUserLocation(true);
 
 						var mk = vue.item;
 						//目标地址
@@ -366,20 +361,10 @@
 							else
 								mui.toast("路线方案查找失败，请确认打开GPS，并获得权限，稍后重试！");
 						}
+						searchObj.walkingSearch(pEnd, "", pStart, "");
 
-						searchObj.walkingSearch(pStart, "", pEnd, "");
-						//继续监控位置变化
-						plus.geolocation.watchPosition(function(p) {
-							var ps = new plus.maps.Point(p.coords.longitude, p.coords.latitude);
-							updatePos(ps, function() {
-								findPosById(vue.item.uid); //每次更新自己位置后获取对方位置
-							});
-						}, function(e) {
-							console.log('Geolocation error: ' + e.message);
-						}, {
-							enableHighAccuracy: true,
-							maximumAge: 5000,
-							provider:"baidu"
+						mapWatchPos(map, function() {
+							findPosById(mk.uid); //每次更新自己位置后获取对方位置
 						});
 					}, function(e) {
 						alert(e);
@@ -405,7 +390,6 @@
 						}
 					}, function(xhr) {}, "none");
 				}
-
 
 				//传入p为标记位置
 				function changeMapOverlays(p) {

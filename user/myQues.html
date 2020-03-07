@@ -312,7 +312,7 @@
 					}
 					items.forEach(function(item) {
 						item.thumbnail = UPLOAD_URL + item.thumbnail;
-						item.create_time = app.getLocalTime(item.create_time);
+						item.create_time = dateUtils.format(item.create_time);
 						if(item.state == 0) {
 							item.state = "等待接单";
 							item.styleClass="state red";

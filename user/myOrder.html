@@ -391,7 +391,7 @@
 						return items;
 					}
 					items.forEach(function(item) {
-						item.create_time = app.getLocalTime(item.create_time);
+						item.create_time = dateUtils.format(item.create_time);
 					});
 
 					//直接从服务器获得数据判断当前数据为已完成订单还是未完成订单

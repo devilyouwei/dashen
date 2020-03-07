@@ -328,26 +328,26 @@ function formatPrice(price) {
 /**
  * 格式化时间的辅助类，将一个时间转换成x小时前、y天前等
  */
-Date.prototype.format = function(fmt) { 
-     var o = { 
-        "M+" : this.getMonth()+1,                 //月份 
-        "d+" : this.getDate(),                    //日 
-        "h+" : this.getHours(),                   //小时 
-        "m+" : this.getMinutes(),                 //分 
-        "s+" : this.getSeconds(),                 //秒 
-        "q+" : Math.floor((this.getMonth()+3)/3), //季度 
-        "S"  : this.getMilliseconds()             //毫秒 
-    }; 
-    if(/(y+)/.test(fmt)) {
-            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
-    }
-     for(var k in o) {
-        if(new RegExp("("+ k +")").test(fmt)){
-             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-         }
-     }
-    return fmt; 
-}        
+Date.prototype.format = function(fmt) {
+	var o = {
+		"M+": this.getMonth() + 1, //月份 
+		"d+": this.getDate(), //日 
+		"h+": this.getHours(), //小时 
+		"m+": this.getMinutes(), //分 
+		"s+": this.getSeconds(), //秒 
+		"q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+		"S": this.getMilliseconds() //毫秒 
+	};
+	if(/(y+)/.test(fmt)) {
+		fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+	}
+	for(var k in o) {
+		if(new RegExp("(" + k + ")").test(fmt)) {
+			fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+		}
+	}
+	return fmt;
+}
 var dateUtils = {
 	UNITS: {
 		'年': 31557600000,
@@ -455,4 +455,33 @@ function geoGetPos(callback, ecallback) {
 		enableHighAccuracy: true,
 		provider: "baidu"
 	});
+}
+
+//plus gps监控位置
+function geoWatchPos(callback) {
+	//plus监控位置变化
+	plus.geolocation.watchPosition(function(p) {
+		var ps = new plus.maps.Point(p.coords.longitude, p.coords.latitude);
+		updatePos(ps, callback);
+	}, function(e) {
+		mui.toast('Geolocation error: ' + e.message);
+	}, {
+		enableHighAccuracy: true,
+		maximumAge: 5000,
+		provider: "baidu"
+	});
+}
+
+//map 插件监控位置
+function mapWatchPos(map, callback) {
+	var inter= setInterval(function() {
+		map.getUserLocation(function(state, pos) {
+			if(state == 0) {
+				updatePos(pos,callback);
+			} else {
+				mui.alert('无法实时监控位置，请打开GPS或检查权限后，重试');
+				clearInterval(inter);
+			}
+		})
+	}, 5000);
 }

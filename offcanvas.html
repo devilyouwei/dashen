@@ -15,6 +15,8 @@
 		<style>
 			body {
 				background-size: cover;
+				background: #F9F9F9;
+				color:#000000;
 			}
 			
 			.mui-content {
@@ -26,8 +28,7 @@
 			}
 			
 			.mui-table-view .mui-table-view-cell {
-				color: #FAFAFA;
-				border: none;
+				color: #000000;
 			}
 			
 			.mui-table-view.list-menu {
@@ -200,8 +201,6 @@
 			});
 			mui.plusReady(function() {
 				app.log();
-				//设置offcanvas背景
-				document.querySelector("body").style.backgroundImage = "url(images/offcanvas_bg.jpg)";
 
 				//获得主页面webview引用；
 				var _index = plus.webview.getWebviewById("index");

@@ -82,7 +82,7 @@
 									img.src = "../images/weixin.png";
 								else
 									img.src = "../images/unkown.jpg";
-								span.innerText = app.getLocalTime(log[i].time) + "　IP:" + log[i].ip;
+								span.innerText = dateUtils.format(log[i].time) + "　IP:" + log[i].ip;
 								p.innerText = log[i].os;
 								li.appendChild(a);
 								a.appendChild(img);
