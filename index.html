@@ -449,7 +449,7 @@
 							doc.getElementById("news_box").style.display = "none"; //关闭新需求消息盒子
 							//传入当前最新的需求单id。也就是最大的id
 							clearInterval(news_interval); //关闭原来的计时器
-							start_news_interval(vue.items[0].id);
+							//start_news_interval(vue.items[0].id);
 						}
 					}, function(xhr) {
 						$('#list').pullRefresh().endPulldown();
