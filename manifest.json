@@ -121,8 +121,8 @@
 		"runmode": "liberate",/*应用的首次启动运行模式，可取liberate或normal，liberate模式在第一次启动时将解压应用资源（Android平台File API才可正常访问_www目录）*/
 		"signature": "Sk9JTiBVUyBtYWlsdG86aHIyMDEzQGRjbG91ZC5pbw==",/*可选，保留给应用签名，暂不使用*/
 		"distribute": {
-			"plugins": {"share":{"qq":{"appid":"wxad22fb0aae296a35","description":"QQ分享"}},"payment":{"weixin":{"description":"微信支付","appid":"dashen"}},
-				"maps": {"baidu":{"appkey_ios":"","appkey_android":"Y3nj19rRKT5xp2zslE2eE2Ww6Iuupd6x","appkey":"","description":""}
+			"plugins": {"share":{"qq":{"appid":"zhongbang","description":"QQ分享"}},"payment":{"weixin":{"description":"微信支付","appid":"dashen"}},
+				"maps": {"amap":{"appkey_ios":"d3dd2e28d5420eb9f96db6b50e1862d6","appkey_android":"c9f65d9ab780e357ca33ab0b211cb593","description":""}
 					
 				}
 			},
@@ -353,8 +353,7 @@
 					"js/app.js",
 					"user/login_log.html",
 					"offcanvas.html",
-					"css/style.css",
-					"images/icon.png"
+					"css/style.css"
 				],
 				"refer": [
 					"login.html"
@@ -450,8 +449,7 @@
 					"images/unkown.jpg",
 					"images/apple.jpg",
 					"images/linux.jpg",
-					"images/windows.jpg",
-					"images/weixin.png"
+					"images/windows.jpg"
 				],
 				"refer": [],
 				"priority": 0
@@ -514,12 +512,9 @@
 					"images/start.png",
 					"images/stop-red.ico",
 					"images/start.ico",
-					"js/vue.min.js",
-					"fonts/fontawesome-webfont.ttf"
+					"js/vue.min.js"
 				],
-				"refer": [
-					"user/wallet.html"
-				],
+				"refer": [],
 				"priority": 0
 			},
 			"user/ques_main.html": {
@@ -593,8 +588,7 @@
 				"refer": [
 					"user/wallet.html",
 					"user/myQues.html",
-					"user/myOrder.html",
-					"service/ask.html"
+					"user/myOrder.html"
 				],
 				"priority": 0
 			},
@@ -706,8 +700,7 @@
 					"css/mui.min.css",
 					"css/style.css",
 					"js/vue.min.js",
-					"css/font-awesome.css",
-					"images/my_icon.jpg"
+					"css/font-awesome.css"
 				],
 				"refer": [
 					"service/home.html"
@@ -818,8 +811,7 @@
 					"css/font-awesome.css",
 					"fonts/mui.ttf",
 					"fonts/fontawesome-webfont.ttf",
-					"css/icons-extra.css",
-					"images/my_icon.jpg"
+					"css/icons-extra.css"
 				],
 				"refer": [],
 				"priority": 0

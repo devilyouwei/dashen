@@ -74,13 +74,8 @@
 					<label>确认</label>
 					<input id='repassword' name="repassword" type="password" class="mui-input-clear mui-input" placeholder="请确认密码">
 				</div>
-				<div class="mui-input-row">
-					<label>请码</label>
-					<input id='recommend' name="recommend" type="text" class="mui-input-clear mui-input" placeholder="输入邀请码（选填）">
-				</div>
 			</form>
 
-			<!--
 			<h5 class="mui-content-padded">请选择密码加密方式（随意）</h5>
 			<ul class="mui-table-view mui-table-view-radio">
 				<li class="mui-table-view-cell mui-selected">
@@ -93,10 +88,9 @@
 					<a class="mui-navigate-right">sha1</a>
 				</li>
 			</ul>
-			-->
 
 			<div class="mui-content-padded">
-				<p>密码6-22位，可用特殊字符：~!@#$%^&*.</p>
+				<p>密码6-22位，特殊字符可用：~!@#$%^&*.</p>
 				<button id='reg' class="mui-btn mui-btn-block mui-btn-primary">注册</button>
 			</div>
 			<div class="mui-content-padded">
@@ -116,13 +110,10 @@
 				var user_pwd = doc.getElementById('user_pwd');
 				var repassword = doc.getElementById('repassword');
 				var code = doc.getElementById("code");
-				var recommend = doc.getElementById("recommend");
 
-				/*
 				document.querySelector('.mui-table-view.mui-table-view-radio').addEventListener('selected', function(e) {
 					encryption = e.detail.el.innerText;
 				});
-				*/
 
 				$.plusReady(function() {
 					app.log();
@@ -137,8 +128,7 @@
 					var regInfo = {
 						user_pwd: trim(user_pwd.value), //密码
 						encryption: encryption.replace(/(\n)+|(\r\n)+/g, ""), //去除\n符号
-						code: trim(code.value), //手机验证码
-						recommend:trim(recommend.value)
+						code: trim(code.value) //手机验证码
 					};
 
 					if(regInfo.code == "")

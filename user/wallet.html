@@ -50,25 +50,6 @@
 				font-size: 1.5em;
 				padding: 1em;
 			}
-			
-			.mui-col-xs-3 {
-				text-align: center;
-			}
-			
-			.mui-col-xs-3 span {
-				border: solid 1px gray;
-				padding: 5px 10px;
-				border-radius: 15px;
-			}
-			
-			span.active {
-				border: solid 1px orange;
-				color: orange;
-			}
-			
-			.recharge-box {
-				display: none;
-			}
 		</style>
 	</head>
 
@@ -84,54 +65,29 @@
 				<h1>余额</h1>
 			</div>
 		</div>
-		<div class="recharge-box" id="recharge-box">
-			<form class="mui-input-group mui-padding-top-sm">
-				<p class="mui-content-padded mui-padding-vertical-sm">选择充值金额（单位：元）</p>
-				<div class="mui-row mui-margin-vertical-sm">
-					<div class="mui-col-xs-3">
-						<span class="s-price">500</span>
-					</div>
-					<div class="mui-col-xs-3">
-						<span class="s-price">1000</span>
-					</div>
-					<div class="mui-col-xs-3">
-						<span class="s-price">2000</span>
-					</div>
-					<div class="mui-col-xs-3">
-						<span class="s-price">5000</span>
-					</div>
-				</div>
-				<div class="mui-input-row mui-margin-top">
-					<label>其他金额</label>
-					<input type="number" placeholder="点击输入金额" id="order_money" name="order_money">
-				</div>
-				<div class="mui-padding">
-					<button type="button" class="mui-btn mui-btn-primary mui-btn-block" id="askOrder">立即充值</button>
-				</div>
-			</form>
-		</div>
-		<!--
 		<ul class="mui-table-view mui-margin-vertical">
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right" id="showPay">
+					<i class="icon-credit-card">&nbsp;</i>充值
+				</a>
+			</li>
 			<li class="mui-table-view-cell">
 				<a class="mui-navigate-right">
 					<i class="icon-money">&nbsp;</i>申请提现
 				</a>
 			</li>
 		</ul>
-		-->
 
 		<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="../js/app.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			(function($, doc) {
-				//充值最小金额
 				var MIN_VALUE = 1;
 				$.init();
 				$.plusReady(function() {
-					setTimeout(init_money, 300);
+					setTimeout(init_money,300);
 				});
 
-				//初始化金额1
 				function init_money() {
 					app.request("Money", "getMoney", {}, function(res) {
 						if(res.login == 0) {
@@ -139,40 +95,31 @@
 							return app.toLogin();
 						}
 						if(res.status == 1) {
-							//连上网络同步钱包后显示充值界面
-							var my_money = formatPrice(res.data);
-							doc.getElementById("recharge-box").style.display = "block";
-							doc.getElementById("my_money").innerText = my_money;
-							//刷新本地钱包缓存
-							var user_info = app.getUserInfo();
-							user_info.money = my_money;
-							app.setUserInfo(user_info);
+							//连上网络了才绑定充值按钮
+							doc.getElementById("showPay").addEventListener("tap", showPay, false);
+							doc.getElementById("my_money").innerText = parseFloat(res.data).toFixed(2)
 						} else {
 							mui.toast(res.info)
 						}
 					}, function(xhr) {}, "none");
 				}
 
-				//点击固定金额
-				mui(".recharge-box").on("tap", "span", function() {
-					//去除已经激活tab的样式
-					var active = doc.querySelector(".active");
-					if(active)
-						active.classList.remove("active");
-					//激活当前tab卡
-					this.classList.add("active");
-					doc.getElementById("order_money").value = this.innerText;
-				})
-
-				//点击充值
-				doc.getElementById("askOrder").addEventListener("tap", function() {
-					askOrder(doc.getElementById("order_money").value);
-				});
+				var floatw = null;
+				//弹出支付窗口，仅仅支持微信
+				function showPay(e) {
+					e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+					var btnArray = ['取消', '确定'];
+					mui.prompt('本平台仅支持微信支付', '金额', '充值', btnArray, function(e) {
+						if(e.index == 1) {
+							askOrder(e.value);
+						} else {
+							return;
+						}
+					}, 'div')
+					document.querySelector('.mui-popup-input input').type = 'number';
+				}
 
 				function askOrder(value) {
-					if(value == "") {
-						return mui.alert("请输入充值金额！", "错误", null, null, "div");
-					}
 					var value = parseFloat(value).toFixed(2);
 					//非法字符
 					if(isNaN(value))
@@ -195,7 +142,7 @@
 							alert("很遗憾，您的手机尚未安装微信或微信支付模块未打开！");
 						}
 					}, function(e) {
-						alert(e.message);
+
 					})
 
 				}
@@ -216,6 +163,7 @@
 					}, function(xhr) {
 
 					});
+
 				}
 
 			}(mui, document));

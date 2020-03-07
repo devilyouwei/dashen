@@ -8,37 +8,6 @@
 		<link href="../css/mui.min.css" rel="stylesheet" />
 		<link href="../css/style.css" rel="stylesheet" />
 		<style type="text/css">
-			.update {
-				font-style: normal;
-				color: #999999;
-				font-size: 15px
-			}
-			
-			.about-icon {
-				padding-top: 15%;
-				padding-bottom: 10px;
-				text-align: center;
-			}
-			
-			.about-icon img {
-				width: 80px;
-			}
-			
-			.about-copy {
-				position: absolute;
-				bottom: 0;
-				width: 100%;
-				text-align: center;
-				font-size: 13px;
-				padding: 5px;
-				color: gray;
-			}
-			
-			.banben {
-				color: gray;
-				text-align: center;
-			}
-			
 			.mui-views,
 			.mui-view,
 			.mui-pages,
@@ -209,6 +178,12 @@
 						</ul>
 						<ul class="mui-table-view">
 							<li class="mui-table-view-cell">
+								<label>允许挖掘</label>
+								<div id="switch-find" class="mui-switch mui-switch-blue">
+									<div class="mui-switch-handle"></div>
+								</div>
+							</li>
+							<li class="mui-table-view-cell">
 								<label>附近可见</label>
 								<div id="switch-service" class="mui-switch mui-switch-blue">
 									<div class="mui-switch-handle"></div>
@@ -220,9 +195,6 @@
 							<li class="mui-table-view-cell">
 								<a class="mui-navigate-right" href="#" id="clear_cache">清空缓存</a>
 							</li>
-							<li class="mui-table-view-cell">
-								<a href="#copyright">关于软件 <i class="mui-pull-right update">V1.0</i></a>
-							</li>
 						</ul>
 						</br>
 						<div class="mui-content-padded">
@@ -231,47 +203,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<div id="copyright" class="mui-page">
-			<div class="mui-navbar-inner mui-bar mui-bar-nav">
-				<button type="button" class="mui-left mui-action-back mui-btn  mui-btn-link mui-btn-nav mui-pull-left">
-					<span class="mui-icon mui-icon-left-nav"></span>返回
-				</button>
-				<h1 class="mui-center mui-title">关于呀哦服务与版权</h1>
-			</div>
-
-			<div class="mui-page-content">
-				<div class="mui-scroll-wrapper">
-					<div class="mui-scroll">
-						<p class="about-icon"><img src="../images/icon.png" /></p>
-						<h4 class="banben">版本&nbsp;v1.0</h4>
-						<ul class="mui-table-view mui-margin-vertical">
-							<li class="mui-table-view-cell">
-								<a id="tel" class="mui-navigate-right">客服电话</a>
-							</li>
-							<!--
-							<li id="check_update" class="mui-table-view-cell mui-plus-visible">
-								<a id="update" class="mui-navigate-right">检查更新</a>
-							</li>
-							<li class="mui-table-view-cell mui-plus-visible">
-								<a id="rate" class="mui-navigate-right">评分鼓励</a>
-							</li>
-							<li class="mui-table-view-cell mui-plus-visible">
-								<a id="welcome" class="mui-navigate-right">欢迎页</a>
-							</li>
-							<li class="mui-table-view-cell mui-plus-visible">
-								<a id="share" class="mui-navigate-right">分享推荐</a>
-							</li>
-							<li class="mui-table-view-cell">
-								<a id="feedback-btn" href="#feedback" class="mui-navigate-right">问题反馈</a>
-							</li>
-							-->
-						</ul>
-					</div>
-				</div>
-			</div>
-			<footer class="about-copy"> Copyright © 2017 - 呀哦服务. All Rights Reserved. </footer>
 		</div>
 
 		<div id="change" class="mui-page">
@@ -294,7 +225,6 @@
 							<div class="mui-input-row mui-password">
 								<input id="new_pwd" name="new_pwd" type="password" class="mui-input-password">
 							</div>
-							<!--
 							<h5>选择加密方式</h5>
 							<div class="mui-input-row">
 								<ul class="mui-table-view mui-table-view-radio">
@@ -309,7 +239,6 @@
 									</li>
 								</ul>
 							</div>
-							-->
 							<p>密码6-22位，数字大小写字母，不能纯数字，特殊字符可用：~!@#$%^&*.</p>
 							<button id="sub_pwd" type="button" class="mui-btn mui-btn-blue mui-btn-block">
 								确认
@@ -319,6 +248,7 @@
 				</div>
 			</div>
 		</div>
+
 		<script src="../js/mui.min.js"></script>
 		<script src="../js/mui.view.js"></script>
 		<script src="../js/app.js"></script>
@@ -369,11 +299,9 @@
 
 					var pwdbtn = document.getElementById("sub_pwd");
 					var encryption = "md5"; //默认设置为md5
-					/*
 					document.querySelector('.mui-table-view.mui-table-view-radio').addEventListener('selected', function(e) {
 						encryption = e.detail.el.innerText;
 					});
-					*/
 
 					pwdbtn.addEventListener("tap", function(event) {
 						var new_pwd = document.getElementById("new_pwd");
@@ -411,22 +339,21 @@
 					});
 
 					//开关监测
-					//var s_find = document.getElementById("switch-find");
+					var s_find = document.getElementById("switch-find");
 					var s_service = document.getElementById("switch-service");
 					var userinfo = app.getUserInfo(); //用户本地存储有is_find,is_service
-					//if(userinfo.is_find == 1)
-					//	s_find.classList.add("mui-active");
+					if(userinfo.is_find == 1)
+						s_find.classList.add("mui-active");
 					if(userinfo.is_service == 1)
 						s_service.classList.add("mui-active");
 
 					document.getElementById("submit").addEventListener("tap", function(event) {
 						var data = {
-							//is_find: s_find.classList.contains("mui-active") ? 1 : 0,
+							is_find: s_find.classList.contains("mui-active") ? 1 : 0,
 							is_service: s_service.classList.contains("mui-active") ? 1 : 0
 						}
 						//没有变动就不要提交到服务器
-						//if(userinfo.is_find == data.is_find && userinfo.is_service == data.is_service)
-						if(userinfo.is_service == data.is_service)
+						if(userinfo.is_find == data.is_find && userinfo.is_service == data.is_service)
 							return false;
 
 						app.request('User', 'saveSecurity', data, function(res) {
@@ -487,11 +414,6 @@
 						});
 					});
 				}
-
-				//客服电话
-				document.getElementById("tel").addEventListener('tap', function() {
-					plus.device.dial("114");
-				});
 			})(mui);
 		</script>
 	</body>

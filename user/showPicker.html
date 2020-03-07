@@ -1,5 +1,5 @@
 <!doctype html>
-<html id="error">
+<html>
 	<!--
     	作者：devilyouwei@gmail.com
     	时间：2017-08-17
@@ -212,20 +212,19 @@
 				});
 
 				var map = null;
-				var map_icon = null;
-				var map_marker = null;
 				var confirm = doc.getElementById("confirm");
-
 				$.plusReady(function() {
 					app.log();
-
 					//取得需求单号
 					var ques_id = plus.webview.currentWebview().ques_id;
-					//关闭当前页面时关闭地图gps
-					plus.webview.currentWebview().addEventListener("close", function() {
-						if(map)
+					var oldBack = $.back;
+					$.back = function() {
+						//推出前清空地图
+						if(map) {
 							map.showUserLocation(false);
-					});
+						}
+						oldBack();
+					}
 
 					//晚加载信息，防止卡顿
 					setTimeout(function() {
@@ -250,9 +249,8 @@
 								confirm.addEventListener("tap", confirmOrder, false); //绑定确认事件
 							}
 
-							vue.item = convert(res.data);
 							init_map();
-							init_map_icon();
+							vue.item = convert(res.data);
 						} else {
 							mui.toast(res.info);
 							$.back();
@@ -265,8 +263,10 @@
 
 				//确认订单完成
 				function confirmOrder() {
-					mui.confirm("请确认接单方已经完成您的需求\n确认后接单方将立即获得您的赏金！", "确认完成需求", ["取消", "确认，已完成"], function(e) {
-						if(e.index == 1) {
+					mui.confirm("请确认接单方已经完成您的该项需求，确认后接单方将立即获得您的赏金！", "确认完成需求", ["取消", "确认，已完成"], function(e) {
+						if(e.index == 0) {
+							return;
+						} else {
 							var id = confirm.getAttribute("data-id");
 							app.request("QuesOrder", "confirmOrder", {
 								id: id //此处为需求单id，并非订单id
@@ -282,13 +282,10 @@
 									if(theme)
 										theme.classList.add("done");
 									mui.toast(res.info);
-									console.log(res.info);
 								} else {
 									mui.toast(res.info);
 								}
-							}, function(xhr) {
-								error.innerHTML = xhr.response;
-							});
+							}, function(xhr) {});
 						}
 					});
 
@@ -309,121 +306,57 @@
 					return item;
 				}
 
-				//初始化地图标记头像
-				function init_map_icon() {
-					var mk = vue.item;
-					if(!mk.my_icon_sm || mk.my_icon_sm == "") {
-						map_icon = "../images/my_icon_35.jpg";
-					} else {
-						app.baseImgFile(mk.user_name, mk.my_icon_sm, 100, function(i) {
-							//缩放图片，图片比附近地图更小
-							plus.zip.compressImage({
-									src: i.target,
-									dst: "_doc/kehu.jpg",
-									width: "60%", // 缩小到原来的一半
-									overwrite: true
-								},
-								function(e) {
-									map_icon = e.target;
-								},
-								function(error) {
-									map_icon = i.target;
-								});
-						});
-					}
-				}
-
 				//初始化地图
 				function init_map() {
 					plus.geolocation.getCurrentPosition(function(p) {
-						//自己位置
-						var pStart = new plus.maps.Point(p.coords.longitude, p.coords.latitude);
-						//上传至服务器
-						updatePos(pStart);
-
-						//建立地图
+						//先获取用户定位，默认位置到用户位置
+						var ptObj = new plus.maps.Point(p.coords.longitude, p.coords.latitude);
+						//新建题图对象
 						map = new plus.maps.Map("map", {
-							center: pStart,
+							center: ptObj,
 							zoom: 15,
+							traffic: true,
 						});
-
-						//实时显示用户位置
+						//显示用户位置
+						map.getUserLocation(function(state, pos) {
+							if(0 == state) {
+								map.setCenter(pos);
+							}
+						});
 						map.showUserLocation(true);
 
 						var mk = vue.item;
-						//目标地址
-						var pEnd = new plus.maps.Point(mk.longitude, mk.latitude);
-
-						//检索从自己位置到目标位置的路线
-						var searchObj = new plus.maps.Search(map);
-						searchObj.onRouteSearchComplete = function(state, result) {
-							if(state == 0) {
-								//默认添加第一条路线
-								map.addOverlay(result.getRoute(0));
-								map.centerAndZoom(result.startPosition.point, 16);
-							} else if(state == -1)
-								mui.toast("无法规划合适路线，请拨打电话");
-							else
-								mui.toast("路线方案查找失败，请确认打开GPS，并获得权限，稍后重试！");
-						}
-
-						searchObj.walkingSearch(pStart, "", pEnd, "");
-						//继续监控位置变化
-						plus.geolocation.watchPosition(function(p) {
-							var ps = new plus.maps.Point(p.coords.longitude, p.coords.latitude);
-							updatePos(ps, function() {
-								findPosById(vue.item.uid); //每次更新自己位置后获取对方位置
+						//注册客户位置
+						var marker = new plus.maps.Marker(new plus.maps.Point(mk.longitude, mk.latitude));
+						var bubble = new plus.maps.Bubble(mk.user_name);
+						marker.setBubble(bubble);
+						marker.bringToTop();
+						if(!mk.my_icon_sm || mk.my_icon_sm == "") {
+							marker.setIcon("../images/my_icon_35.jpg");
+							map.addOverlay(marker);
+						} else {
+							app.baseImgFile(mk.user_name, mk.my_icon_sm, 100, function(i) {
+								//缩放图片，图片比附近地图更小
+								plus.zip.compressImage({
+										src: i.target,
+										dst: "_doc/kehu.jpg",
+										width: "60%", // 缩小到原来的一半
+										overwrite: true
+									},
+									function(e) {
+										marker.setIcon(e.target);
+										map.addOverlay(marker);
+									},
+									function(error) {
+										marker.setIcon(i.target); //如果压缩失败就添加原图
+										map.addOverlay(marker);
+									});
 							});
-						}, function(e) {
-							console.log('Geolocation error: ' + e.message);
-						}, {
-							enableHighAccuracy: true,
-							maximumAge: 5000
-						});
+						}
 					}, function(e) {
 						alert("定位失败，未开启设备GPS或GPS无权限获得！无法打开地图", "定位错误", "好的", "div");
 					});
 
-				}
-
-				//获取对方位置
-				function findPosById(id) {
-					//读取对方位置
-					app.request('Service', 'findPosById', {
-						'id': id
-					}, function(res) {
-						//服务器方登陆失效
-						if(res.login == 0) {
-							mui.toast(res.info);
-							return app.toLogin(res.info);
-						}
-						if(res.status == 1) {
-							//获取到对方新位置立即标记下来
-							changeMapOverlays(res.data);
-						} else {
-							mui.toast(res.info);
-						}
-					}, function(xhr) {}, "none");
-				}
-
-
-				//传入p为标记位置
-				function changeMapOverlays(p) {
-					//清空原来标记物
-					if(map_marker)
-						map.removeOverlay(map_marker);
-
-					//重新安放标记的新位置
-					//对方标记地址
-					var pEnd = new plus.maps.Point(p.longitude, p.latitude);
-					map_marker = new plus.maps.Marker(pEnd);
-
-					//点击弹出姓名
-					var bubble = new plus.maps.Bubble(vue.item.user_name);
-					map_marker.setBubble(bubble);
-					map_marker.bringToTop();
-					map_marker.setIcon(map_icon);
-					map.addOverlay(map_marker); //添加新标记
 				}
 
 			}(mui, document))

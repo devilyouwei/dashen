@@ -53,6 +53,7 @@
 			<h1 class="mui-title">头信息</h1>
 		</header>
 		<div class="mui-content">
+
 			<ul class="mui-table-view">
 				<li class="mui-table-view-cell">
 					<a id="head" class="mui-navigate-right">个人头像
@@ -67,14 +68,8 @@
 				<h5 class="mui-margin-horizontal-xs">个人签名：</h5>
 				<input class="mui-padding-lg" id="signature" type="text" placeholder="个人签名" />
 			</div>
-
-			<p class="mui-content-padded">点击：分享邀请码</p>
-			<ul class="mui-table-view">
-				<li class="mui-table-view-cell">
-					<a class="mui-navigate-right" id="ph_share">
-					</a>
-				</li>
-			</ul>
+			<img src="" id="test1" alt="" />
+			<img src="" id="test2" alt="" />
 		</div>
 
 		<script src="../js/mui.min.js"></script>
@@ -192,21 +187,6 @@
 					var signature = app.getUserInfo().signature; //签名
 					document.getElementById("head-img1").src = my_icon || '../images/my_icon.jpg';
 					document.getElementById("signature").value = signature || "";
-					document.getElementById("ph_share").innerText = "我的邀请码：" + app.getUserInfo()['phone'];
-				}
-
-				document.getElementById("ph_share").addEventListener("tap", share);
-				//分享邀请码
-				function share() {
-					var msg = {
-						content: "请输入我的邀请码注册："+app.getUserInfo()['phone']+"（此分享来自呀哦服务）",
-						pictures: "/images/icon.png"
-					};
-					plus.share.sendWithSystem ? plus.share.sendWithSystem(msg, function() {
-						console.log('Success');
-					}, function(e) {
-						console.log('Failed: ' + JSON.stringify(e));
-					}) : shareSystemNativeJS();
 				}
 
 				//预览图像

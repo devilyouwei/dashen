@@ -261,7 +261,7 @@
 			
 			#titlePopover {
 				width: 16em;
-				height: 280px;
+				height: 220px;
 				left: 50%;
 				margin-left: -8em;
 			}
@@ -280,18 +280,10 @@
 			.mui-progressbar-success span {
 				background-color: #4cd964;
 			}
-			#my_money{
-				color:#2AC845;
-				font-size:14px;
-			}
 		</style>
 	</head>
 
 	<body>
-		<header class="mui-bar mui-bar-nav">
-			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="mui-title">发起需求</h1>
-		</header>
 		<div class="mui-content">
 			<div class="mui-progressbar mui-progressbar-success mui-padding-top-xs" id="upload_progress">
 				<span></span>
@@ -416,13 +408,10 @@
 				<div class="mui-row">
 					<select class="mui-btn mui-btn-block mui-padding-horizontal-sm" name="reward" id="reward">
 						<option value="金钱悬赏" selected>金钱悬赏</option>
-						<!--
 						<option value="志愿协助">志愿协助</option>
 						<option value="请客吃饭">请客吃饭</option>
 						<option value="赠送礼物">赠送礼物</option>
-						-->
 					</select>
-					<h4 id="my_money" class="mui-text-center mui-margin-vertical-sm"></h4>
 					<input type="text" name="message" id="message" placeholder="留言" />
 					<div id="price_box" class="mui-numbox" data-numbox-step='100' data-numbox-min='0' style="width: 220px;height: 50px;">
 						<button class="mui-btn mui-numbox-btn-minus" type="button">-</button>
@@ -436,9 +425,9 @@
 				</div>
 			</div>
 
-			<div class="mui-margin-vertical mui-padding-horizontal">
+			<div class="mui-margin-vertical-sm mui-padding-horizontal-sm">
 				<div class="mui-row">
-					<button class="mui-btn mui-btn-block mui-btn-primary" id="submit"><i class="mui-icon icon-edit">&nbsp;</i>提交需求</button>
+					<button class="mui-btn mui-btn-block mui-btn-primary" id="submit">提交需求</button>
 				</div>
 			</div>
 
@@ -505,7 +494,6 @@
 						app.log();
 						setTimeout(function() {
 							init_title();
-							init_money();
 						}, 300)
 						//document.getElementById("upload_box").style.display="block";
 						init_image_add(); //初始化图片添加器
@@ -618,16 +606,6 @@
 						//确认支付
 						mui.confirm("该需求单将会消耗您" + question.price + "元，是否提交？", "确认提交并支付", ["否", "是"], function(e) {
 							if(e.index == 1) {
-								var money = formatPrice(app.getUserInfo()['money']);
-								if(money < question.price)
-									return mui.confirm("<font color='red'>抱歉，余额不足，无法发起！</font>", "无法发起需求", ['换个金额', '去充值'], function(e) {
-										if(e.index == 1) {
-											$.openWindow({
-												id: 'user/wallet',
-												url: '/user/wallet.html'
-											});
-										}
-									}, "div");
 								//用户未选择上传原图时，压缩所有上传图片
 								if(!document.getElementById("high_img").classList.contains("mui-active") && question.files.length > 0) {
 									submitQuesZipImg(question.files.length - 1);
@@ -657,28 +635,6 @@
 							//doc.getElementById("html").innerHTML = xhr.response;
 							plus.webview.currentWebview().close();
 						});
-					}
-
-					function init_money() {
-						app.request("Money", "getMoney", {}, function(res) {
-							if(res.login == 0) {
-								mui.toast(res.info);
-								return app.toLogin();
-							}
-							if(res.status == 1) {
-								//连上网络了才绑定充值按钮
-								var money = formatPrice(res.data);
-								doc.getElementById("my_money").innerText = "余额：" + money + "元";
-								//更新缓存money
-								var user_info = app.getUserInfo();
-								user_info.money = money;
-								app.setUserInfo(user_info);
-							} else {
-								mui.toast(res.info)
-							}
-						}, function(xhr) {
-							plus.webview.currentWebview().close();
-						}, "none");
 					}
 
 					//压缩图片并且上传表单数据
@@ -763,7 +719,7 @@
 						//添加上传数据
 						for(key in question) {
 							//去掉此三项为文件
-							if(key == "files" || key == "gift_img" || key == "arecord")
+							if(key == "files" || key == "gift_img" || key=="arecord")
 								continue;
 							uploader.addData(key, question[key]);
 						}
@@ -817,10 +773,10 @@
 												mui.fire(plus.webview.getWebviewById("index"), "updateQues");
 											}, "div");
 										} else {
-											mui.alert(res.info);
+											console.log(JSON.stringify(res.info));
 										}
 									} else {
-										mui.toast(status + "：上传失败！网络错误！请稍后重试");
+										mui.toast(status+"：上传失败！网络错误！请稍后重试");
 										//error.innerHTML = upload.responseText;
 										//上传失败，一般是由于网络、文件过大，格式问题
 										//mui.toast(res.info);
@@ -1151,7 +1107,7 @@
 							question.longitude = p.coords.longitude + ""; //前端强制转换为字符串，否则后端转换报错
 							question.latitude = p.coords.latitude + "";
 							question.addr = p.addresses
-							question.loc = p.address.district;// + p.address.street + p.address.streetNum + p.address.poiName;
+							question.loc = p.address.district + p.address.street + p.address.streetNum + p.address.poiName;
 							question.poi = p.address.poiName;
 							//console.log(JSON.stringify(p));
 							document.getElementById("loc").value = question.loc;

@@ -4,14 +4,11 @@
 
 //注意，最终要使用linux服务器，做路径不易出现访问错误
 IP = "dashen.devil.ren"
-HTTP_DOMAIN = "http://" + IP + "/app/"; //app核心控制器服务器地址
-SHARE_URL = "http://" + IP + "/public/index.php/wap/Wx/share"; //分享地址
-UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/"; //阿里oss服务器
+HTTP_DOMAIN = "http://" + IP + "/index.php/app/";//app核心控制器服务器地址
+SHARE_URL = "http://"+IP+"";//分享地址
+UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/";//阿里oss服务器
 
 (function($, owner) {
-	$(".mui-scroll-wrapper").scroll({
-		deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
-	});
 	//使用全局进度条
 	//把通用的ajax请求打包起来
 	/*
@@ -33,7 +30,6 @@ UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/"; //阿里oss服务�
 			return;
 		var url = HTTP_DOMAIN + ctl + "/" + act;
 		console.log(url);
-		console.log(JSON.stringify(dataObj));
 		mui.ajax(url, {
 			data: dataObj,
 			dataType: 'json',
@@ -119,7 +115,7 @@ UPLOAD_URL = "http://zhongbang.oss-cn-beijing.aliyuncs.com/"; //阿里oss服务�
 		return reg.test(qq);
 	}
 	owner.checkPhoneNumber = function(phone) {
-		var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+		var reg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/; 
 		return reg.test(phone);
 	}
 
@@ -308,9 +304,9 @@ function playRefresh() {
 }
 
 //格式化价格
-function formatPrice(price) {
-	price = parseFloat(price) //转换为浮点数
-	if(isNaN(price)) {
+function formatPrice(price){
+	price = parseFloat(price)//转换为浮点数
+	if(isNaN(price)){
 		return false;
 	}
 	return price.toFixed(2);
@@ -348,31 +344,3 @@ var dateUtils = {
 		return date.toLocaleString().replace(/:\d{1,2}$/, ' ');
 	}
 };
-
-
-/*
- * 更新用户位置的方法，注意：自己只能更新自己的，用session判断更新谁的
- * 传入map：Point对象
- * callback回掉函数
- * ecallback错误回掉函数
- */
-var updatePos = function(pos, callback,ecallback) {
-	var longitude = pos.longitude;
-	var latitude = pos.latitude;
-	//将位置发送到服务器
-	app.request('Service', 'updateUserPos', {
-		'longitude': longitude,
-		'latitude': latitude
-	}, function(res) {
-		//服务器方登陆失效
-		if(res.login == 0) {
-			mui.toast(res.info);
-			return app.toLogin(res.info);
-		}
-		if(callback && typeof callback == "function")
-			return callback();
-	}, function() {
-		if(ecallback && typeof ecallback == "function")
-			return ecallback();
-	}, "none");
-}

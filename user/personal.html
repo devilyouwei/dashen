@@ -181,7 +181,6 @@
 						        		<div class="mui-col-xs-8" id="sex"></div>
 						        	</div>
 						        </li>
-						        <!--
 						        <li class="mui-table-view-cell">
 						        	<div class="mui-row">
 						        		<div class="mui-col-xs-4 text-gray">感情</div>
@@ -206,8 +205,6 @@
 						        		<div class="mui-col-xs-8" id="faculty"></div>
 						        	</div>
 						        </li>
-						        -->
-
 						        <li class="mui-table-view-cell">
 						        	<div class="mui-row">
 						        		<div class="mui-col-xs-4 text-gray">所在地</div>
@@ -218,7 +215,6 @@
 						        		</div>
 						        	</div>
 						        </li>
-
 						        <li class="mui-table-view-cell">
 						        	<div class="mui-row">
 						        		<div class="mui-col-xs-4 text-gray">身份</div>
@@ -293,7 +289,6 @@
 									<option value="女">女</option>
 								</select>
 							</div>
-							<!--
 							<div class="mui-input-row">
 								<label class="text-gray">感情</label>
 								<select name="love_stat">
@@ -332,7 +327,6 @@
 									<input type="text" name='faculty' placeholder="选择院系" readonly/>
 								</a>
 							</div>
-							-->
 							<div class="mui-input-row">
 								<label class="text-gray">所在地</label>
 								<input type="text" id="cityPicker" name='location' readonly/>
@@ -342,10 +336,7 @@
 							</div>
 							<div class="mui-input-row">
 								<label class="text-gray">身份</label>
-								<select name="actor">
-									<option value="企业" selected>企业</option>
-									<option value="个人">个人</option>
-								</select>
+								<input type="text" name='actor'  class="mui-input-clear"/>
 							</div>
 							<div class="mui-input-row">
 								<label class="text-gray">姓名</label>
@@ -471,9 +462,7 @@
 						if(res.status == 1) {
 							//列出信息
 							for(var key in res.data) {
-								var content = document.getElementById(key);
-								if(content)
-								content.innerText = res.data[key];
+								document.querySelector("#" + key).innerText = res.data[key];
 							}
 							userInfo = res.data; //将获取到的用户信息存到全局变量
 							document.getElementById("to_edit").classList.remove("mui-hidden"); //数据加载后可编辑
@@ -491,18 +480,18 @@
 					//每次从查看到编辑页面都要还原，避免用户迷糊
 					document.querySelector("input[name=user_name]").value = userInfo.user_name;
 					document.querySelector("select[name=sex]").value = userInfo.sex;
-					//document.querySelector("select[name=education]").value = userInfo.education;
-					//document.querySelector("select[name=love_stat]").value = userInfo.love_stat;
-					//document.querySelector("input[name=university]").value = userInfo.university;
-					//document.querySelector("input[name=faculty]").value = userInfo.faculty;
+					document.querySelector("select[name=education]").value = userInfo.education;
+					document.querySelector("select[name=love_stat]").value = userInfo.love_stat;
 					document.querySelector("input[name=birth]").value = userInfo.birth;
-					document.querySelector("select[name=actor]").value = userInfo.actor;
+					document.querySelector("input[name=actor]").value = userInfo.actor;
 					document.querySelector("input[name=real_name]").value = userInfo.real_name;
 					document.querySelector("input[name=email]").value = userInfo.email;
 					document.querySelector("input[name=phone]").value = userInfo.phone;
 					document.querySelector("input[name=qq]").value = userInfo.qq;
 					document.querySelector("input[name=weixin]").value = userInfo.weixin;
 					document.querySelector("input[name=location]").value = userInfo.province + " " + userInfo.city + " " + userInfo.county;
+					document.querySelector("input[name=university]").value = userInfo.university;
+					document.querySelector("input[name=faculty]").value = userInfo.faculty;
 					document.querySelector("input[name=province]").value = userInfo.province;
 					document.querySelector("input[name=city]").value = userInfo.city;
 					document.querySelector("input[name=county]").value = userInfo.county;
@@ -519,15 +508,15 @@
 					//由于没有jquery支持的serialize，所以分别赋值
 					subForm.user_name = trim(document.querySelector("input[name=user_name]").value);
 					subForm.sex = document.querySelector("select[name=sex]").value;
-					//subForm.love_stat = document.querySelector("select[name=love_stat]").value;
-					//subForm.education = document.querySelector("select[name=education]").value;
-					//subForm.university = document.querySelector("input[name=university]").value;
-					//subForm.faculty = document.querySelector("input[name=faculty]").value;
+					subForm.love_stat = document.querySelector("select[name=love_stat]").value;
+					subForm.education = document.querySelector("select[name=education]").value;
+					subForm.university = document.querySelector("input[name=university]").value;
+					subForm.faculty = document.querySelector("input[name=faculty]").value;
 					subForm.birth = document.querySelector("input[name=birth]").value;
 					subForm.province = document.querySelector("input[name=province]").value;
 					subForm.city = document.querySelector("input[name=city]").value;
 					subForm.county = document.querySelector("input[name=county]").value;
-					subForm.actor = trim(document.querySelector("select[name=actor]").value);
+					subForm.actor = trim(document.querySelector("input[name=actor]").value);
 					subForm.real_name = trim(document.querySelector("input[name=real_name]").value);
 					subForm.email = trim(document.querySelector("input[name=email]").value);
 					subForm.phone = trim(document.querySelector("input[name=phone]").value);

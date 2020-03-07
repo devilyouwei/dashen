@@ -10,10 +10,6 @@
 		<link href="css/mui.min.css" rel="stylesheet" />
 		<link href="css/font-awesome.css" rel="stylesheet" />
 		<link href="css/style.css" rel="stylesheet" />
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/vConsole/3.2.0/vconsole.min.js"></script>
-		<script>
-			var vConsole = new VConsole()
-		</script>
 		<style>
 			.check {
 				background: #fff;
@@ -64,24 +60,6 @@
 				font-weight: 600;
 				font-size: 1.2em;
 			}
-			
-			#tab {
-				display: none;
-				white-space: nowrap;
-			}
-			
-			#search-box {
-				display: none;
-			}
-			
-			#tab a {
-				color: #000000;
-			}
-			
-			#tab a.active {
-				color: #007aff;
-				border-bottom: solid 2px #007aff;
-			}
 		</style>
 	</head>
 
@@ -101,29 +79,13 @@
 				</div>
 			</div>
 
-			<!--顶部分类选项卡-->
-			<div id="tab" class="mui-scroll-wrapper mui-padding-vertical-xs">
-				<div class="mui-scroll">
-					<a class="mui-padding-horizontal-xs" v-for="item in tabs" v-bind:data-tab-id="item.id">{{item.title}}</a>
-				</div>
-			</div>
-
-			<div id="search-box" class="mui-padding-horizontal-sm mui-row">
-				<div class="mui-input-row mui-search mui-plus-visible mui-col-xs-8">
-					<input id="search" type="search" class="mui-input-speech mui-input-clear" placeholder="搜索内容" />
-				</div>
-				<div id="mui-col-xs-4">
-					<button class="mui-btn mui-btn-primary mui-pull-right" id="showMap"><i class="icon-location-arrow">&nbsp;</i>附近需求</button>
-				</div>
-			</div>
-			<!--
+			<button class="mui-btn mui-btn-primary btn-float" id="showMap"><i class="icon-location-arrow"></i></button>
 			<p class="mui-content-padded">最新未被接单</p>
-			-->
 			<div id="list">
 				<div class="cards">
 					<div class="mui-card" v-for="item in items">
 						<div class="mui-card-header mui-card-media">
-							<img v-bind:src="item.my_icon_sm" onerror="this.src='images/my_icon.jpg'" />
+							<img v-bind:src="item.my_icon_sm" onerror="this.src='images/my_icon.jpg'"/>
 							<div class="mui-media-body">
 								发单方：{{item.user_name}}
 								<p>{{item.create_time}}</p>
@@ -163,7 +125,6 @@
 						}
 					}
 				});
-				var TAB_ID = 0; //当前分类ID
 				var _self = null; //当前主窗口
 				var _map = null;
 				var _offcanvas = null; //offcanvas子窗口
@@ -173,10 +134,9 @@
 				var check = doc.getElementById("check");
 				var refresh = doc.getElementById("refresh");
 				var vue = new Vue({
-					el: '.mui-content',
+					el: '#list',
 					data: {
-						items: [],
-						tabs: []
+						items: []
 					}
 				});
 
@@ -193,7 +153,7 @@
 
 					//初始化两大子页面
 					setTimeout(init_offcanvs, 300)
-					setTimeout(check_login, 400)
+					setTimeout(check_login, 500)
 
 					//返回按钮退出
 					var backButtonPress = 0;
@@ -286,43 +246,6 @@
 					}, false);
 				}
 
-				var search = document.getElementById("search");
-				//初始化分类卡
-				function init_tabs() {
-					app.request("Ques", "getQuesTitle", {}, function(res) {
-						if(res.status == 1) {
-							vue.tabs = res.data;
-							doc.getElementById("tab").style.display = "block";
-							doc.getElementById("search-box").style.display = "block";
-							//分类选择
-							mui("#tab").on("tap", "a", function() {
-								//去除已经激活tab的样式
-								var active = doc.querySelector(".active");
-								if(active)
-									active.classList.remove("active");
-								//激活当前tab卡
-								this.classList.add("active");
-								//清空内容
-								vue.items = [];
-								search.value = ""; //重置搜素哦
-								TAB_ID = this.getAttribute("data-tab-id");
-								init_index_ques();
-							});
-						} else {
-							mui.toast(res.info);
-						}
-					}, function(xhr) {
-
-					});
-				}
-
-				//监听搜索
-				search.addEventListener("keyup", function(e) {
-					if(e && e.keyCode == 13) {
-						init_index_ques();
-					}
-				});
-
 				//检测登陆状态，并刷新本地数据
 				function check_login() {
 					//直到检查登陆状态结束后才关闭载入界面和全屏
@@ -335,8 +258,6 @@
 							//如果检测服务器存在且本地相对应不操作
 							app.setUserInfo(res.data); //存储服务器获取的个人信息
 							mui.fire(_offcanvas, "updateHeadInfo"); //策划菜单更新信息
-							update_user_position();
-							init_tabs();
 							init_index_ques();
 							//尚未完善资料
 							if(res.data.is_authentic == 0) {
@@ -367,7 +288,6 @@
 					_offcanvas.show(); //显示offcanvas
 
 					//启用侧滑拖拽操作，延时的原因是menu页是延时创建的，所以这里需要相应延时
-					/*
 					setTimeout(function() {
 						_self.drag({
 							direction: "right",
@@ -377,7 +297,6 @@
 							moveMode: "follow"
 						}, function(e) {});
 					}, 350);
-					*/
 				}
 
 				window.addEventListener("updateQues", init_index_ques);
@@ -385,9 +304,7 @@
 				//初始化主页的需求单
 				function init_index_ques() {
 					app.request("Index", "getQues", {
-						min_id: 0,
-						tab_id: TAB_ID,
-						search: trim(search.value)
+						min_id: 0
 					}, function(res) {
 						document.getElementById("list").style.display = "block";
 						$('#list').pullRefresh().endPulldown();
@@ -408,9 +325,7 @@
 				//加载更多主页需求单
 				function more_index_ques() {
 					app.request("Index", "getQues", {
-						min_id: MIN_ID,
-						tab_id: TAB_ID,
-						search: trim(search.value)
+						min_id: MIN_ID
 					}, function(res) {
 						$('#list').pullRefresh().endPullup();
 						if(res.login == 0) {
@@ -461,16 +376,12 @@
 				}
 
 				doc.getElementById("showMap").addEventListener("tap", function() {
-					plus.nativeUI.showWaiting("定位启动中...", {
-						back: 'none'
-					}); //显示加载等待
 					create_map();
 				}, false);
 
 				//为了避免闪屏，等到地图隐藏后才绑定跳转按钮
 				window.addEventListener("showMapNow", function() {
 					_map.show("slide-in-right", 200);
-					plus.nativeUI.closeWaiting();
 					//推迟地图刷新，防止卡顿
 					setTimeout(function() {
 						mui.fire(_map, "updateMap");
@@ -539,15 +450,6 @@
 							});
 						}
 					}, "div");
-				}
-
-				//进图app立即先更新一下坐标
-				function update_user_position() {
-					plus.geolocation.getCurrentPosition(function(p) {
-						updatePos(new plus.maps.Point(p.coords.longitude, p.coords.latitude));
-					}, function(e) {
-
-					});
 				}
 			}(mui, document));
 		</script>
